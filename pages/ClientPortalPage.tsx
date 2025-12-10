@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { ArrowUpRight, Calendar, CheckCircle2, Clock3, AlertTriangle, Users, Link2, FileText, CreditCard, MessageSquare, Sparkles, ExternalLink, BarChart3, ShieldCheck } from 'lucide-react';
 import { BRAND, CLIENT_PORTAL_PROJECTS, CLIENT_INVOICES } from '../constants';
-import { ClientProject, ClientInvoice } from '../types';
+import { ClientProject, ClientInvoice, ClientProjectTask } from '../types';
 import { useData } from '../contexts/DataContext';
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -18,10 +18,18 @@ const statusCopy: Record<ClientProject['status'], string> = {
   'Behind': 'Course correcting'
 };
 
-const taskStatusStyles = {
-  done: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/40',
+const taskStatusStyles: Record<ClientProjectTask['status'], string> = {
+  todo: 'text-gray-300 bg-slate-800 border-slate-700',
   in_progress: 'text-blue-200 bg-blue-500/10 border-blue-500/40',
-  blocked: 'text-rose-200 bg-rose-500/10 border-rose-500/40'
+  done: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/40',
+  cancelled: 'text-rose-200 bg-rose-500/10 border-rose-500/40'
+};
+
+const taskStatusLabel: Record<ClientProjectTask['status'], string> = {
+  todo: 'To Do',
+  in_progress: 'In Progress',
+  done: 'Done',
+  cancelled: 'Cancelled'
 };
 
 const currency = (invoice: ClientInvoice) =>
@@ -61,7 +69,7 @@ const ClientPortalPage: React.FC = () => {
   );
 
   const totalOpenTasks = projectsSource.reduce((count, project) => {
-    return count + (project.tasks || []).filter(t => t.status !== 'done').length;
+    return count + (project.tasks || []).filter(t => t.status !== 'done' && t.status !== 'cancelled').length;
   }, 0);
 
   const upcomingMilestone = useMemo(() => {
@@ -339,7 +347,7 @@ const ClientPortalPage: React.FC = () => {
                           {task.highlight && <p className="text-xs text-amber-300 mt-1">{task.highlight}</p>}
                         </div>
                         <span className={`text-[11px] px-3 py-1 rounded-full border ${taskStatusStyles[task.status]}`}>
-                          {task.status === 'in_progress' ? 'In Progress' : task.status === 'blocked' ? 'Blocked' : 'Done'}
+                          {taskStatusLabel[task.status]}
                         </span>
                       </div>
                     </div>

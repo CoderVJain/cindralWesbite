@@ -13,6 +13,7 @@ import ContactPage from './pages/ContactPage';
 import ResourcesPage from './pages/ResourcesPage';
 import BrandAssetsPage from './pages/BrandAssetsPage';
 import AdminPage from './pages/AdminPage';
+import AdminClientProjectPage from './pages/AdminClientProjectPage';
 import ClientPortalPage from './pages/ClientPortalPage';
 import { BRAND, LOGO_URL } from './constants';
 
@@ -71,6 +72,7 @@ const MainContent = () => {
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/resources/brand-assets" element={<BrandAssetsPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/client-project/:id" element={<AdminClientProjectPage />} />
           <Route path="/client" element={<ClientPortalPage />} />
         </Routes>
       </div>

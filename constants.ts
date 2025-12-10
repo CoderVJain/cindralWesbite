@@ -360,7 +360,7 @@ export const CLIENT_PORTAL_PROJECTS: ClientProject[] = [
     tasks: [
       { id: 'task-cp1-1', title: 'Performance profiling on heatmaps', status: 'in_progress', owner: 'James Wilson', dueDate: '2024-06-15', highlight: 'Target p95 < 180ms' },
       { id: 'task-cp1-2', title: 'Copy + compliance review', status: 'done', owner: 'Aisha Gupta', dueDate: '2024-05-30' },
-      { id: 'task-cp1-3', title: 'Pen-test remediation batch 1', status: 'blocked', owner: 'Sarah Chen', dueDate: '2024-06-10', highlight: 'Awaiting VPN allowlist for vendor' }
+      { id: 'task-cp1-3', title: 'Pen-test remediation batch 1', status: 'todo', owner: 'Sarah Chen', dueDate: '2024-06-10', highlight: 'Awaiting VPN allowlist for vendor' }
     ],
     timeline: [
       { id: 'tl-cp1-1', label: 'Discovery + Research', date: '2024-02-29', status: 'complete', description: 'Stakeholder workshops & audits.' },
@@ -400,7 +400,7 @@ export const CLIENT_PORTAL_PROJECTS: ClientProject[] = [
     tasks: [
       { id: 'task-cp2-1', title: 'Accessibility QA sweep', status: 'in_progress', owner: 'Elena Rodriguez', dueDate: '2024-06-12', highlight: 'VoiceOver + captions across scenes.' },
       { id: 'task-cp2-2', title: 'Lighting pass for Hall B', status: 'done', owner: 'Yuki Tanaka', dueDate: '2024-05-26' },
-      { id: 'task-cp2-3', title: 'Client content approvals', status: 'blocked', owner: 'Miguel Torres', dueDate: '2024-06-05', highlight: 'Need sign-off on 32 artifacts.' }
+      { id: 'task-cp2-3', title: 'Client content approvals', status: 'todo', owner: 'Miguel Torres', dueDate: '2024-06-05', highlight: 'Need sign-off on 32 artifacts.' }
     ],
     timeline: [
       { id: 'tl-cp2-1', label: 'Photogrammetry batch 1', date: '2024-02-20', status: 'complete', description: '150 artifacts scanned.' },

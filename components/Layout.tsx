@@ -62,9 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
               <Link to="/team" className="text-sm font-medium text-gray-300 hover:text-cindral-blue transition-colors">Team</Link>
               <Link to="/csr" className="text-sm font-medium text-gray-300 hover:text-cindral-blue transition-colors">Impact</Link>
-              <Link to="/resources" className="text-sm font-medium text-gray-300 hover:text-cindral-blue transition-colors">Resources</Link>
-              <Link to="/client" className="text-sm font-medium text-gray-300 hover:text-cindral-blue transition-colors">Client Panel</Link>
-              
+              <Link to="/resources" className="text-sm font-medium text-gray-300 hover:text-cindral-blue transition-colors">Resources</Link>              
               <Link to="/contact" className="ml-4 px-5 py-2 text-sm font-medium bg-white text-slate-900 rounded-full hover:bg-cindral-blue hover:text-white transition-all">
                 Contact
               </Link>
@@ -156,9 +154,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <li><Link to="/about" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">About Us</Link></li>
                 <li><Link to="/team" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Our Team</Link></li>
                 <li><Link to="/resources" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Resources</Link></li>
-                <li><Link to="/client" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Client Panel</Link></li>
                 <li><Link to="/contact" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Contact</Link></li>
-                <li><Link to="/admin" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Admin</Link></li>
+                <li><Link to="/client" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Client Panel</Link></li>
+                <li><Link to="/admin" className="text-gray-400 hover:text-cindral-blue text-sm transition-colors">Admin Panel</Link></li>
               </ul>
             </div>
           </div>

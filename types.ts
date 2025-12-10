@@ -77,7 +77,7 @@ export interface ContactSubmission {
   status: ContactSubmissionStatus;
 }
 
-export type ClientTaskStatus = 'done' | 'in_progress' | 'blocked';
+export type ClientTaskStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 export type ProjectHealth = 'green' | 'amber' | 'red';
 
 export interface ClientProjectTimelineItem {

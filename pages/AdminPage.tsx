@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { LayoutDashboard, Users, Layers, Lock, Briefcase, Plus, Trash2, Edit2, X, Save, Database, Download, Mail, MailOpen, Clock3, CheckCircle2, LayoutGrid, List, CreditCard, Link2, UserPlus, ShieldCheck, CheckSquare, MinusSquare } from 'lucide-react';
 import { Division, Project, TeamMember, DivisionType, ContactSubmissionStatus, ClientProject, ClientInvoice, ClientUser, ClientProjectTask } from '../types';
@@ -354,6 +355,13 @@ const ManageClientProjects = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
 
+  const calculateProgressFromTasks = (taskList: ClientProjectTask[] = []) => {
+    const actionable = taskList.filter(t => t.status !== 'cancelled');
+    if (!actionable.length) return 0;
+    const done = actionable.filter(t => t.status === 'done').length;
+    return Math.round((done / actionable.length) * 100);
+  };
+
   const openModal = (mode: 'create' | 'edit', cp?: ClientProject) => {
     if (mode === 'edit' && cp) {
       setEditingId(cp.id);
@@ -413,11 +421,13 @@ const ManageClientProjects = () => {
     }
     setIsProcessing(true);
     try {
+      const taskProgress = calculateProgressFromTasks(tasks);
       const payload: Partial<ClientProject> = {
         ...editForm,
         budgetUsed: Number(editForm.budgetUsed) || 0,
         resources: parseJsonField(resourcesInput, 'Resources'),
         tasks,
+        progress: taskProgress,
         timeline: parseJsonField(timelineInput, 'Timeline'),
         updates: parseJsonField(updatesInput, 'Updates'),
         links: parseJsonField(linksInput, 'Links')
@@ -456,74 +466,312 @@ const ManageClientProjects = () => {
   const addTask = () => {
     setTasks(prev => [
       ...prev,
-      { id: `task_${Date.now()}`, title: 'New Task', status: 'in_progress', owner: '', dueDate: '', highlight: '' }
+      { id: `task_${Date.now()}`, title: 'New Task', status: 'todo', owner: '', dueDate: '', highlight: '' }
     ]);
   };
 
   const removeTask = (id: string) => setTasks(prev => prev.filter(t => t.id !== id));
 
+  const healthBadge: Record<ClientProject['health'], string> = {
+    green: 'bg-emerald-500/10 border-emerald-500/40 text-emerald-200',
+    amber: 'bg-amber-500/10 border-amber-500/40 text-amber-200',
+    red: 'bg-rose-500/10 border-rose-500/40 text-rose-200'
+  };
+
+  const statusBadge: Record<ClientProject['status'], string> = {
+    'On Track': 'bg-cyan-500/10 border-cyan-400/40 text-cyan-200',
+    'At Risk': 'bg-amber-500/10 border-amber-400/40 text-amber-200',
+    Behind: 'bg-rose-500/10 border-rose-400/40 text-rose-200'
+  };
+
+  const totalTasks = clientProjects.reduce((sum, p) => sum + (p.tasks?.length || 0), 0);
+  const totalCancelled = clientProjects.reduce((sum, p) => sum + (p.tasks || []).filter(t => t.status === 'cancelled').length, 0);
+  const avgProgress = clientProjects.length
+    ? Math.round(
+        clientProjects.reduce((sum, p) => sum + (calculateProgressFromTasks(p.tasks || []) || p.progress || 0), 0) /
+          clientProjects.length
+      )
+    : 0;
+  const activeHealth = clientProjects.reduce(
+    (acc, p) => {
+      acc[p.health] = (acc[p.health] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+  const statusCounts = clientProjects.reduce(
+    (acc, p) => {
+      (p.tasks || []).forEach(task => {
+        acc[task.status] = (acc[task.status] || 0) + 1;
+      });
+      return acc;
+    },
+    { todo: 0, in_progress: 0, done: 0, cancelled: 0 } as Record<ClientProjectTask['status'], number>
+  );
+  const totalStatusCount = statusCounts.todo + statusCounts.in_progress + statusCounts.done + statusCounts.cancelled;
+  const onTrackCount = clientProjects.filter(p => p.status === 'On Track').length;
+  const atRiskCount = clientProjects.filter(p => p.status === 'At Risk').length;
+  const behindCount = clientProjects.filter(p => p.status === 'Behind').length;
+  const avgTasksPerProject = clientProjects.length ? Math.round(totalTasks / clientProjects.length) : 0;
+  const completionRate =
+    totalStatusCount - statusCounts.cancelled > 0
+      ? Math.round((statusCounts.done / (totalStatusCount - statusCounts.cancelled)) * 100)
+      : 0;
+  const healthTotal = clientProjects.length || 0;
+  const greenPct = healthTotal ? Math.round(((activeHealth.green || 0) / healthTotal) * 100) : 0;
+  const amberPct = healthTotal ? Math.round(((activeHealth.amber || 0) / healthTotal) * 100) : 0;
+  const redPct = healthTotal ? Math.round(((activeHealth.red || 0) / healthTotal) * 100) : 0;
+
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-1">Client Delivery</p>
             <h2 className="text-2xl font-bold text-white">Client Projects</h2>
-            <p className="text-sm text-gray-500">Data powering the client portal (progress, milestones, resources).</p>
+            <p className="text-sm text-gray-500">Open a dedicated page per project. Drag-and-drop lives there.</p>
           </div>
           <button onClick={() => openModal('create')} className="bg-cindral-blue px-4 py-2 rounded-lg text-white font-bold flex items-center hover:bg-blue-600 transition-colors">
             <Plus className="w-4 h-4 mr-2" /> Add Client Project
           </button>
         </div>
 
-        <div className="overflow-hidden border border-slate-800 rounded-2xl">
-          <table className="min-w-full divide-y divide-slate-800 text-sm">
-            <thead className="bg-slate-900">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Name</th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Client</th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Status</th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Progress</th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Next Milestone</th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-400">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-slate-900/40 divide-y divide-slate-800">
-              {clientProjects.map(cp => (
-                <tr key={cp.id}>
-                  <td className="px-4 py-4 text-white font-semibold">{cp.name}</td>
-                  <td className="px-4 py-4 text-gray-300">{cp.clientName}</td>
-                  <td className="px-4 py-4 text-gray-300">{cp.status}</td>
-                  <td className="px-4 py-4 text-gray-400">{cp.progress}%</td>
-                  <td className="px-4 py-4 text-gray-400">{cp.nextMilestone}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex gap-2">
-                      <button onClick={() => openModal('edit', cp)} className="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs hover:bg-blue-600">Edit</button>
-                      <button
-                        disabled={isProcessing}
-                        onClick={async () => {
-                          if (isProcessing) return;
-                          if (confirm('Delete client project?')) {
-                            setIsProcessing(true);
-                            try {
-                              await deleteClientProject(cp.id);
-                            } catch (error) {
-                              console.error(error);
-                              alert('Failed to delete client project');
-                            } finally {
-                              setIsProcessing(false);
-                            }
-                          }
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs hover:bg-red-500/20 disabled:opacity-50"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+        <div className="bg-slate-950/85 border border-slate-800/80 rounded-3xl p-6 space-y-6 shadow-xl shadow-slate-900/40">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Snapshot</p>
+              <h3 className="text-xl font-semibold text-white">Delivery Pulse</h3>
+              <p className="text-xs text-gray-500">Throughput, balance, and risk in one place.</p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <span className="px-3 py-1 rounded-full bg-slate-900/70 border border-slate-800 shadow-inner">{clientProjects.length} projects</span>
+              <span className="px-3 py-1 rounded-full bg-slate-900/70 border border-slate-800 shadow-inner">{totalTasks} tasks</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 min-h-[126px] flex flex-col gap-1">
+              <p className="text-[11px] text-gray-500 uppercase tracking-[0.2em]">Active projects</p>
+              <p className="text-3xl font-bold text-white">{clientProjects.length}</p>
+              <p className="text-[11px] text-gray-500">Avg tasks/project: {avgTasksPerProject}</p>
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 min-h-[126px] flex flex-col gap-1">
+              <p className="text-[11px] text-gray-500 uppercase tracking-[0.2em]">Total tasks</p>
+              <p className="text-3xl font-bold text-white">{totalTasks}</p>
+              <p className="text-[11px] text-amber-300">Cancelled: {totalCancelled}</p>
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 min-h-[126px] flex flex-col gap-2">
+              <p className="text-[11px] text-gray-500 uppercase tracking-[0.2em]">Avg progress</p>
+              <div className="flex items-center gap-3">
+                <p className="text-3xl font-bold text-white">{avgProgress}%</p>
+                <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: `${avgProgress}%` }}></div>
+                </div>
+              </div>
+              <p className="text-[11px] text-gray-500">Completion rate: {completionRate}%</p>
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 min-h-[126px] flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-gray-500 uppercase tracking-[0.2em]">Health</p>
+                <span className="text-[11px] text-gray-500">{clientProjects.length} projects</span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden flex border border-slate-800">
+                <div className="h-full bg-gradient-to-r from-emerald-400 via-amber-300 to-rose-400" style={{ width: `${greenPct + amberPct + redPct}%` }} />
+              </div>
+              <div className="grid grid-cols-3 gap-3 text-[12px] text-gray-200 pt-2">
+                <div className="rounded-xl bg-slate-800/80 border border-slate-700 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span className="font-semibold">On track</span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">Count: {onTrackCount}</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/80 border border-slate-700 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-300"></span>
+                    <span className="font-semibold">At risk</span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">Count: {atRiskCount}</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/80 border border-slate-700 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-rose-400"></span>
+                    <span className="font-semibold">Behind</span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1">Count: {behindCount}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-white">Status mix</h4>
+                <span className="text-[11px] text-gray-500">{totalStatusCount} tasks</span>
+              </div>
+              {totalStatusCount ? (
+                <>
+                  <div className="w-full h-3 rounded-full bg-slate-900 border border-slate-800 overflow-hidden flex">
+                    <div className="h-full bg-slate-600" style={{ width: `${(statusCounts.todo / totalStatusCount) * 100}%` }}></div>
+                    <div className="h-full bg-blue-500" style={{ width: `${(statusCounts.in_progress / totalStatusCount) * 100}%` }}></div>
+                    <div className="h-full bg-emerald-500" style={{ width: `${(statusCounts.done / totalStatusCount) * 100}%` }}></div>
+                    <div className="h-full bg-rose-500" style={{ width: `${(statusCounts.cancelled / totalStatusCount) * 100}%` }}></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-400">
+                    <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-slate-500"></span>To Do {statusCounts.todo}</span>
+                    <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span>In Progress {statusCounts.in_progress}</span>
+                    <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Done {statusCounts.done}</span>
+                    <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-rose-500"></span>Cancelled {statusCounts.cancelled}</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-gray-500">No tasks yet. Add tasks to see flow.</p>
+              )}
+            </div>
+
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-white">Progress distribution</h4>
+                <span className="text-[11px] text-gray-500">Top projects</span>
+              </div>
+              {clientProjects.length ? (
+                <div className="flex items-end gap-2 h-24">
+                  {clientProjects.slice(0, 10).map(cp => {
+                    const projProgress = calculateProgressFromTasks(cp.tasks || []) || cp.progress || 0;
+                    return (
+                      <div key={cp.id} className="flex flex-col items-center flex-1 gap-1">
+                        <div
+                          className="w-full rounded-t-md bg-gradient-to-t from-cindral-blue to-cyan-400 shadow-sm shadow-cyan-500/20"
+                          style={{ height: `${Math.max(6, (projProgress / 100) * 96)}px` }}
+                          title={`${cp.name} · ${projProgress}%`}
+                        ></div>
+                        <span className="text-[10px] text-gray-500 truncate w-full text-center">{projProgress}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Create a project to see progress trends.</p>
+              )}
+            </div>
+
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-white">Throughput</h4>
+                <span className="text-[11px] text-gray-500">Done vs Active</span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-gray-400">
+                  <span>Completion rate</span>
+                  <span className="text-white font-semibold">{completionRate}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-900 border border-slate-800 overflow-hidden">
+                  <div className="h-full bg-emerald-500" style={{ width: `${completionRate}%` }}></div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-400 pt-1">
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Done {statusCounts.done}</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span>In Progress {statusCounts.in_progress}</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500"></span>To Do {statusCounts.todo}</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span>Cancelled {statusCounts.cancelled}</span>
+                </div>
+                <div className="border-t border-slate-800 pt-2 text-[11px] text-gray-400">
+                  Avg tasks per project <span className="text-white font-semibold ml-1">{avgTasksPerProject}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <div className="overflow-hidden border border-slate-800 rounded-2xl">
+            <table className="min-w-full divide-y divide-slate-800 text-sm">
+              <thead className="bg-slate-900">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Name</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Client</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Progress</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Team</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-400">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-slate-900/40 divide-y divide-slate-800">
+                {clientProjects.map(cp => {
+                  const assignedMembers = (cp.team || []).map(id => team.find(t => t.id === id)).filter(Boolean);
+                  const actionableTasks = (cp.tasks || []).filter(t => t.status !== 'cancelled');
+                  const doneTasks = actionableTasks.filter(t => t.status === 'done').length;
+                  const totalActionable = actionableTasks.length;
+                  const rowProgress = calculateProgressFromTasks(cp.tasks || []) || cp.progress || 0;
+                  return (
+                    <tr key={cp.id} className="align-top">
+                      <td className="px-4 py-4 text-white font-semibold">
+                        <div>{cp.name}</div>
+                        <p className="text-xs text-gray-500">{cp.projectId}</p>
+                      </td>
+                      <td className="px-4 py-4 text-gray-300">{cp.clientName}</td>
+                      <td className="px-4 py-4">
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full border text-xs font-semibold ${statusBadge[cp.status]}`}>
+                          {cp.status}
+                        </div>
+                        <div className={`mt-2 inline-flex items-center px-3 py-1 rounded-full border text-[10px] uppercase tracking-wide ${healthBadge[cp.health]}`}>
+                          {cp.health}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-gray-200">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: `${rowProgress}%` }}></div>
+                          </div>
+                          <span className="text-xs text-gray-400 w-10 text-right">{rowProgress}%</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-1">{totalActionable ? `${doneTasks}/${totalActionable} tasks done` : 'No active tasks'}</p>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex -space-x-2">
+                          {assignedMembers.slice(0, 3).map(member => (
+                            <img key={member!.id} src={member!.image} alt={member!.name} className="w-8 h-8 rounded-full border border-slate-900" />
+                          ))}
+                          {assignedMembers.length > 3 && (
+                            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-900 flex items-center justify-center text-xs text-gray-400">
+                              +{assignedMembers.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          <Link to={`/admin/client-project/${cp.id}`} className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 text-gray-300 hover:border-cindral-blue hover:text-cindral-blue">
+                            Open & Edit
+                          </Link>
+                          <button
+                            disabled={isProcessing}
+                            onClick={async () => {
+                              if (isProcessing) return;
+                              if (confirm('Delete client project?')) {
+                                setIsProcessing(true);
+                                try {
+                                  await deleteClientProject(cp.id);
+                                } catch (error) {
+                                  console.error(error);
+                                  alert('Failed to delete client project');
+                                } finally {
+                                  setIsProcessing(false);
+                                }
+                              }
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs hover:bg-red-500/20 disabled:opacity-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -582,14 +830,30 @@ const ManageClientProjects = () => {
           <div>
             <label className="block text-gray-400 text-sm mb-1">Progress (auto from tasks)</label>
             <div className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white">
-              {tasks.length ? `${Math.round((tasks.filter(t => t.status === 'done').length / tasks.length) * 100)}%` : 'No tasks yet'}
+              {tasks.length ? `${calculateProgressFromTasks(tasks)}%` : 'No tasks yet'}
             </div>
           </div>
           <InputField label="Budget Used (%)" value={String(editForm.budgetUsed ?? 0)} onChange={(v: string) => setEditForm({ ...editForm, budgetUsed: Number(v) })} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Start Date (YYYY-MM-DD)" value={editForm.startDate || ''} onChange={(v: string) => setEditForm({ ...editForm, startDate: v })} />
-          <InputField label="End Date (YYYY-MM-DD)" value={editForm.endDate || ''} onChange={(v: string) => setEditForm({ ...editForm, endDate: v })} />
+          <div>
+            <label className="block text-gray-400 text-sm mb-1">Start Date</label>
+            <input
+              type="date"
+              value={editForm.startDate || ''}
+              onChange={e => setEditForm({ ...editForm, startDate: e.target.value })}
+              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-400 text-sm mb-1">End Date</label>
+            <input
+              type="date"
+              value={editForm.endDate || ''}
+              onChange={e => setEditForm({ ...editForm, endDate: e.target.value })}
+              className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
+            />
+          </div>
         </div>
         <div className="mt-4">
           <label className="block text-gray-400 text-sm mb-2">Team</label>
@@ -650,9 +914,10 @@ const ManageClientProjects = () => {
                       value={task.status}
                       onChange={e => updateTask(task.id, { status: e.target.value as ClientProjectTask['status'] })}
                     >
+                      <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
                       <option value="done">Done</option>
-                      <option value="blocked">Blocked</option>
+                      <option value="cancelled">Cancelled</option>
                     </select>
                   </div>
                   <textarea
@@ -683,7 +948,6 @@ const ManageClientProjects = () => {
     </>
   );
 };
-
 // Manage Projects
 const ManageProjects = () => {
   const { projects, divisions, updateProject, addProject, deleteProject } = useData();
