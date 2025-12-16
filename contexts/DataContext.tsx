@@ -7,7 +7,8 @@ import type {
   TeamMember,
   ClientProject,
   ClientInvoice,
-  ClientUser
+  ClientUser,
+  Initiative
 } from '../types';
 
 type ContactFormInput = {
@@ -25,6 +26,7 @@ interface DataContextType {
   clientProjects: ClientProject[];
   clientInvoices: ClientInvoice[];
   clientUsers: ClientUser[];
+  initiatives: Initiative[];
   contactSubmissions: ContactSubmission[];
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -50,6 +52,9 @@ interface DataContextType {
   addClientUser: (data: Partial<ClientUser>) => Promise<void>;
   updateClientUser: (id: string, data: Partial<ClientUser>) => Promise<void>;
   deleteClientUser: (id: string) => Promise<void>;
+  addInitiative: (data: Partial<Initiative>) => Promise<void>;
+  updateInitiative: (id: string, data: Partial<Initiative>) => Promise<void>;
+  deleteInitiative: (id: string) => Promise<void>;
   updateSubmissionStatus: (id: string, status: ContactSubmissionStatus) => Promise<void>;
   deleteContactSubmission: (id: string) => Promise<void>;
   importData: (data: any) => Promise<void>;
@@ -68,6 +73,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
   const [clientInvoices, setClientInvoices] = useState<ClientInvoice[]>([]);
   const [clientUsers, setClientUsers] = useState<ClientUser[]>([]);
+  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [contactSubmissions, setContactSubmissions] = useState<ContactSubmission[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem(TOKEN_STORAGE_KEY));
@@ -128,13 +134,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const clientUsersPromise = authToken ? fetchAPI('/api/client-users') : Promise.resolve([]);
-      const [fetchedDivisions, fetchedProjects, fetchedTeam, fetchedClientProjects, fetchedClientInvoices, fetchedClientUsers] = await Promise.all([
+      const [fetchedDivisions, fetchedProjects, fetchedTeam, fetchedClientProjects, fetchedClientInvoices, fetchedClientUsers, fetchedInitiatives] = await Promise.all([
         fetchAPI('/api/divisions'),
         fetchAPI('/api/projects'),
         fetchAPI('/api/team'),
         fetchAPI('/api/client-projects'),
         fetchAPI('/api/client-invoices'),
-        clientUsersPromise
+        clientUsersPromise,
+        fetchAPI('/api/initiatives')
       ]);
       setDivisions(fetchedDivisions || []);
       setProjects(fetchedProjects || []);
@@ -142,6 +149,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setClientProjects(fetchedClientProjects || []);
       setClientInvoices(fetchedClientInvoices || []);
       setClientUsers(fetchedClientUsers || []);
+      setInitiatives(fetchedInitiatives || []);
     } catch (error) {
       console.error('Failed to load site data', error);
     } finally {
@@ -350,6 +358,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setClientUsers(prev => prev.filter(u => u.id !== id));
   };
 
+  const addInitiative = async (init: Partial<Initiative>) => {
+    const created = await fetchAPI('/api/initiatives', {
+      method: 'POST',
+      body: JSON.stringify(init)
+    });
+    setInitiatives(prev => [...prev, created]);
+  };
+
+  const updateInitiative = async (id: string, data: Partial<Initiative>) => {
+    const updated = await fetchAPI(`/api/initiatives/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    setInitiatives(prev => prev.map(i => (i.id === id ? updated : i)));
+  };
+
+  const deleteInitiative = async (id: string) => {
+    await fetchAPI(`/api/initiatives/${id}`, { method: 'DELETE' });
+    setInitiatives(prev => prev.filter(i => i.id !== id));
+  };
+
   const updateSubmissionStatus = async (id: string, status: ContactSubmissionStatus) => {
     const updated = await fetchAPI(`/api/contact-submissions/${id}`, {
       method: 'PUT',
@@ -383,6 +412,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     clientProjects,
     clientInvoices,
     clientUsers,
+    initiatives,
     contactSubmissions,
     isLoading,
     isAuthenticated: Boolean(authToken),
@@ -408,6 +438,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addClientUser,
     updateClientUser,
     deleteClientUser,
+    addInitiative,
+    updateInitiative,
+    deleteInitiative,
     updateSubmissionStatus,
     deleteContactSubmission,
     importData,

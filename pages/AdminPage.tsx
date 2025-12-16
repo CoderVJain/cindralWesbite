@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
-import { LayoutDashboard, Users, Layers, Lock, Briefcase, Plus, Trash2, Edit2, X, Save, Database, Download, Mail, MailOpen, Clock3, CheckCircle2, LayoutGrid, List, CreditCard, Link2, UserPlus, ShieldCheck, CheckSquare, MinusSquare } from 'lucide-react';
-import { Division, Project, TeamMember, DivisionType, ContactSubmissionStatus, ClientProject, ClientInvoice, ClientUser, ClientProjectTask } from '../types';
+import { LayoutDashboard, Users, Layers, Lock, Briefcase, Plus, Trash2, Edit2, X, Save, Database, Download, Mail, MailOpen, Clock3, CheckCircle2, LayoutGrid, List, CreditCard, Link2, UserPlus, ShieldCheck, CheckSquare, MinusSquare, Heart } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { Division, Project, TeamMember, DivisionType, ContactSubmissionStatus, ClientProject, ClientInvoice, ClientUser, ClientProjectTask, Initiative } from '../types';
 
 // Admin Login Component
 const AdminLogin: React.FC = () => {
@@ -30,11 +31,11 @@ const AdminLogin: React.FC = () => {
         </div>
         <h2 className="text-2xl font-bold text-white text-center mb-2">Admin Access</h2>
         <p className="text-gray-400 text-center mb-8">Enter password to manage Cindral.</p>
-        
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cindral-blue transition-colors"
@@ -57,8 +58,8 @@ type ViewMode = 'grid' | 'table';
 const InputField = ({ label, value, onChange, placeholder }: any) => (
   <div className="mb-4">
     <label className="block text-gray-400 text-sm mb-1">{label}</label>
-    <input 
-      value={value} 
+    <input
+      value={value}
       onChange={e => onChange(e.target.value)}
       className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
       placeholder={placeholder}
@@ -69,8 +70,8 @@ const InputField = ({ label, value, onChange, placeholder }: any) => (
 const TextAreaField = ({ label, value, onChange, placeholder, rows = 3 }: any) => (
   <div className="mb-4">
     <label className="block text-gray-400 text-sm mb-1">{label}</label>
-    <textarea 
-      value={value} 
+    <textarea
+      value={value}
       onChange={e => onChange(e.target.value)}
       className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
       rows={rows}
@@ -116,18 +117,16 @@ const ViewToggle = ({ mode, onChange }: { mode: ViewMode; onChange: (mode: ViewM
   <div className="inline-flex items-center rounded-xl border border-slate-700 overflow-hidden">
     <button
       onClick={() => onChange('grid')}
-      className={`px-3 py-2 flex items-center space-x-1 text-sm font-medium ${
-        mode === 'grid' ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-white'
-      }`}
+      className={`px-3 py-2 flex items-center space-x-1 text-sm font-medium ${mode === 'grid' ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-white'
+        }`}
     >
       <LayoutGrid className="w-4 h-4" />
       <span>Grid</span>
     </button>
     <button
       onClick={() => onChange('table')}
-      className={`px-3 py-2 flex items-center space-x-1 text-sm font-medium ${
-        mode === 'table' ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-white'
-      }`}
+      className={`px-3 py-2 flex items-center space-x-1 text-sm font-medium ${mode === 'table' ? 'bg-slate-700 text-white' : 'text-gray-400 hover:text-white'
+        }`}
     >
       <List className="w-4 h-4" />
       <span>Table</span>
@@ -317,15 +316,15 @@ const ManageDivisions = () => {
         description="Update positioning, iconography, and color accents for each division."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Title" value={editForm.title || ''} onChange={(v: string) => setEditForm({...editForm, title: v})} />
-          <InputField label="Tagline" value={editForm.tagline || ''} onChange={(v: string) => setEditForm({...editForm, tagline: v})} />
+          <InputField label="Title" value={editForm.title || ''} onChange={(v: string) => setEditForm({ ...editForm, title: v })} />
+          <InputField label="Tagline" value={editForm.tagline || ''} onChange={(v: string) => setEditForm({ ...editForm, tagline: v })} />
         </div>
-        <TextAreaField label="Description" value={editForm.description || ''} onChange={(v: string) => setEditForm({...editForm, description: v})} />
-        <InputField label="Banner Image URL" value={editForm.bannerImage || ''} onChange={(v: string) => setEditForm({...editForm, bannerImage: v})} />
+        <TextAreaField label="Description" value={editForm.description || ''} onChange={(v: string) => setEditForm({ ...editForm, description: v })} />
+        <InputField label="Banner Image URL" value={editForm.bannerImage || ''} onChange={(v: string) => setEditForm({ ...editForm, bannerImage: v })} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InputField label="Icon Name (Lucide)" value={editForm.iconName || ''} onChange={(v: string) => setEditForm({...editForm, iconName: v})} />
-          <InputField label="Text Color Class" value={editForm.color || ''} onChange={(v: string) => setEditForm({...editForm, color: v})} />
-          <InputField label="Theme Color Hex" value={editForm.themeColor || ''} onChange={(v: string) => setEditForm({...editForm, themeColor: v})} />
+          <InputField label="Icon Name (Lucide)" value={editForm.iconName || ''} onChange={(v: string) => setEditForm({ ...editForm, iconName: v })} />
+          <InputField label="Text Color Class" value={editForm.color || ''} onChange={(v: string) => setEditForm({ ...editForm, color: v })} />
+          <InputField label="Theme Color Hex" value={editForm.themeColor || ''} onChange={(v: string) => setEditForm({ ...editForm, themeColor: v })} />
         </div>
         <div className="flex justify-end gap-2 mt-6">
           <button onClick={closeModal} className="px-4 py-2 rounded-xl border border-slate-700 text-gray-300 hover:bg-slate-800">Cancel</button>
@@ -488,9 +487,9 @@ const ManageClientProjects = () => {
   const totalCancelled = clientProjects.reduce((sum, p) => sum + (p.tasks || []).filter(t => t.status === 'cancelled').length, 0);
   const avgProgress = clientProjects.length
     ? Math.round(
-        clientProjects.reduce((sum, p) => sum + (calculateProgressFromTasks(p.tasks || []) || p.progress || 0), 0) /
-          clientProjects.length
-      )
+      clientProjects.reduce((sum, p) => sum + (calculateProgressFromTasks(p.tasks || []) || p.progress || 0), 0) /
+      clientProjects.length
+    )
     : 0;
   const activeHealth = clientProjects.reduce(
     (acc, p) => {
@@ -980,7 +979,7 @@ const ManageProjects = () => {
   };
 
   const save = async () => {
-    if(!editForm.title || !editForm.divisionId) return alert("Title and Division required");
+    if (!editForm.title || !editForm.divisionId) return alert("Title and Division required");
     setIsProcessing(true);
     try {
       if (isAdding) {
@@ -1128,12 +1127,12 @@ const ManageProjects = () => {
         description="Craft hero narratives, client context, and multimedia assets."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Title" value={editForm.title || ''} onChange={(v: string) => setEditForm({...editForm, title: v})} />
+          <InputField label="Title" value={editForm.title || ''} onChange={(v: string) => setEditForm({ ...editForm, title: v })} />
           <div>
             <label className="block text-gray-400 text-sm mb-1">Division</label>
-            <select 
-              value={editForm.divisionId || ''} 
-              onChange={e => setEditForm({...editForm, divisionId: e.target.value})}
+            <select
+              value={editForm.divisionId || ''}
+              onChange={e => setEditForm({ ...editForm, divisionId: e.target.value })}
               className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"
             >
               <option value="">Select Division</option>
@@ -1142,11 +1141,11 @@ const ManageProjects = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Client" value={editForm.client || ''} onChange={(v: string) => setEditForm({...editForm, client: v})} />
-          <InputField label="Year" value={editForm.year || ''} onChange={(v: string) => setEditForm({...editForm, year: v})} />
+          <InputField label="Client" value={editForm.client || ''} onChange={(v: string) => setEditForm({ ...editForm, client: v })} />
+          <InputField label="Year" value={editForm.year || ''} onChange={(v: string) => setEditForm({ ...editForm, year: v })} />
         </div>
-        <TextAreaField label="Summary" value={editForm.summary || ''} onChange={(v: string) => setEditForm({...editForm, summary: v})} rows={2} />
-        <TextAreaField label="Full Content" value={editForm.content || ''} onChange={(v: string) => setEditForm({...editForm, content: v})} rows={5} />
+        <TextAreaField label="Summary" value={editForm.summary || ''} onChange={(v: string) => setEditForm({ ...editForm, summary: v })} rows={2} />
+        <TextAreaField label="Full Content" value={editForm.content || ''} onChange={(v: string) => setEditForm({ ...editForm, content: v })} rows={5} />
         <div className="bg-slate-900/40 p-4 rounded-2xl border border-slate-800 mt-4">
           <h4 className="text-white font-bold mb-3">Project Imagery</h4>
           <InputField
@@ -1157,7 +1156,7 @@ const ManageProjects = () => {
               const updated = [...currentImages];
               if (updated.length === 0) updated.push(v);
               else updated[0] = v;
-              setEditForm({...editForm, images: updated});
+              setEditForm({ ...editForm, images: updated });
             }}
             placeholder="https://example.com/hero.jpg"
           />
@@ -1172,7 +1171,7 @@ const ManageProjects = () => {
             onChange={(v: string) => {
               const banner = editForm.images?.[0] || '';
               const rest = v.split(',').map(s => s.trim()).filter(Boolean);
-              setEditForm({...editForm, images: banner ? [banner, ...rest] : rest});
+              setEditForm({ ...editForm, images: banner ? [banner, ...rest] : rest });
             }}
             rows={3}
           />
@@ -1614,15 +1613,15 @@ const ManageTeam = () => {
 
   const handleArrayInput = (field: 'skills' | 'interests' | 'csrActivities', val: string) => {
     const arr = val.split(',').map(s => s.trim()).filter(Boolean);
-    setEditForm({...editForm, [field]: arr});
+    setEditForm({ ...editForm, [field]: arr });
   };
 
   const toggleProject = (projId: string) => {
     const current = editForm.projectIds || [];
     if (current.includes(projId)) {
-      setEditForm({...editForm, projectIds: current.filter(id => id !== projId)});
+      setEditForm({ ...editForm, projectIds: current.filter(id => id !== projId) });
     } else {
-      setEditForm({...editForm, projectIds: [...current, projId]});
+      setEditForm({ ...editForm, projectIds: [...current, projId] });
     }
   };
 
@@ -1743,12 +1742,12 @@ const ManageTeam = () => {
         description="Update bios, badges, and highlight stats."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Name" value={editForm.name || ''} onChange={(v: string) => setEditForm({...editForm, name: v})} />
-          <InputField label="Role" value={editForm.role || ''} onChange={(v: string) => setEditForm({...editForm, role: v})} />
+          <InputField label="Name" value={editForm.name || ''} onChange={(v: string) => setEditForm({ ...editForm, name: v })} />
+          <InputField label="Role" value={editForm.role || ''} onChange={(v: string) => setEditForm({ ...editForm, role: v })} />
         </div>
-        <TextAreaField label="Bio" value={editForm.bio || ''} onChange={(v: string) => setEditForm({...editForm, bio: v})} rows={3} />
-        <InputField label="Image URL" value={editForm.image || ''} onChange={(v: string) => setEditForm({...editForm, image: v})} />
-        <InputField label="Quote" value={editForm.quote || ''} onChange={(v: string) => setEditForm({...editForm, quote: v})} />
+        <TextAreaField label="Bio" value={editForm.bio || ''} onChange={(v: string) => setEditForm({ ...editForm, bio: v })} rows={3} />
+        <InputField label="Image URL" value={editForm.image || ''} onChange={(v: string) => setEditForm({ ...editForm, image: v })} />
+        <InputField label="Quote" value={editForm.quote || ''} onChange={(v: string) => setEditForm({ ...editForm, quote: v })} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <div>
             <label className="block text-gray-400 text-sm mb-1">Skills (Comma separated)</label>
@@ -1764,11 +1763,11 @@ const ManageTeam = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto bg-slate-900 p-2 rounded border border-slate-600">
             {projects.map(p => (
               <label key={p.id} className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={editForm.projectIds?.includes(p.id) || false} 
+                <input
+                  type="checkbox"
+                  checked={editForm.projectIds?.includes(p.id) || false}
                   onChange={() => toggleProject(p.id)}
-                  className="rounded border-gray-600 bg-slate-800 text-cindral-blue focus:ring-offset-slate-900" 
+                  className="rounded border-gray-600 bg-slate-800 text-cindral-blue focus:ring-offset-slate-900"
                 />
                 <span>{p.title}</span>
               </label>
@@ -1991,60 +1990,498 @@ const ManageData = () => {
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold text-white mb-6">Data Management</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700">
-           <Download className="w-8 h-8 text-blue-400 mb-4" />
-           <h3 className="text-xl font-bold text-white mb-2">Export Data</h3>
-           <p className="text-gray-400 mb-6">Download a JSON backup of Divisions, Projects, Team, and contact submissions.</p>
-           <button onClick={handleExport} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold transition-colors w-full">
-             Download Backup
-           </button>
+          <Download className="w-8 h-8 text-blue-400 mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">Export Data</h3>
+          <p className="text-gray-400 mb-6">Download a JSON backup of Divisions, Projects, Team, and contact submissions.</p>
+          <button onClick={handleExport} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold transition-colors w-full">
+            Download Backup
+          </button>
         </div>
 
         <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700">
-           <Database className="w-8 h-8 text-green-400 mb-4" />
-           <h3 className="text-xl font-bold text-white mb-2">Import Data</h3>
-           <p className="text-gray-400 mb-6">Restore data from a JSON backup file. This overwrites every entry on the server.</p>
-           <label className={`block w-full text-center px-4 py-2 rounded-lg font-bold transition-colors ${busyAction === 'import' ? 'bg-slate-600 text-gray-400 cursor-not-allowed opacity-60' : 'bg-slate-700 hover:bg-slate-600 text-white cursor-pointer'}`}>
-             <input type="file" accept=".json" onChange={handleImport} className="hidden" disabled={busyAction === 'import'} />
-             {busyAction === 'import' ? 'Importing...' : 'Select File to Import'}
-           </label>
+          <Database className="w-8 h-8 text-green-400 mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">Import Data</h3>
+          <p className="text-gray-400 mb-6">Restore data from a JSON backup file. This overwrites every entry on the server.</p>
+          <label className={`block w-full text-center px-4 py-2 rounded-lg font-bold transition-colors ${busyAction === 'import' ? 'bg-slate-600 text-gray-400 cursor-not-allowed opacity-60' : 'bg-slate-700 hover:bg-slate-600 text-white cursor-pointer'}`}>
+            <input type="file" accept=".json" onChange={handleImport} className="hidden" disabled={busyAction === 'import'} />
+            {busyAction === 'import' ? 'Importing...' : 'Select File to Import'}
+          </label>
         </div>
       </div>
 
       <div className="bg-red-900/20 p-8 rounded-2xl border border-red-900/50 mt-8">
-         <h3 className="text-xl font-bold text-red-500 mb-2">Danger Zone</h3>
-         <p className="text-gray-400 mb-4">Reset all data to the initial factory settings (Demo Data).</p>
-         <button
-           disabled={busyAction === 'reset'}
-           onClick={async () => {
-             if (busyAction === 'reset') return;
-             if (confirm("Reset to the original sample data?")) {
-               setBusyAction('reset');
-               try {
-                 await resetData();
-                 alert("Data reset successfully.");
-               } catch (error) {
-                 console.error(error);
-                 alert("Failed to reset data.");
-               } finally {
-                 setBusyAction(null);
-               }
-             }
-           }}
-           className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg font-bold transition-colors disabled:opacity-50"
-         >
-            {busyAction === 'reset' ? 'Resetting...' : 'Reset All Data'}
-         </button>
+        <h3 className="text-xl font-bold text-red-500 mb-2">Danger Zone</h3>
+        <p className="text-gray-400 mb-4">Reset all data to the initial factory settings (Demo Data).</p>
+        <button
+          disabled={busyAction === 'reset'}
+          onClick={async () => {
+            if (busyAction === 'reset') return;
+            if (confirm("Reset to the original sample data?")) {
+              setBusyAction('reset');
+              try {
+                await resetData();
+                alert("Data reset successfully.");
+              } catch (error) {
+                console.error(error);
+                alert("Failed to reset data.");
+              } finally {
+                setBusyAction(null);
+              }
+            }
+          }}
+          className="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg font-bold transition-colors disabled:opacity-50"
+        >
+          {busyAction === 'reset' ? 'Resetting...' : 'Reset All Data'}
+        </button>
       </div>
     </div>
   );
 };
 
+// Manage Initiatives
+const ManageInitiatives = () => {
+  const { initiatives, addInitiative, updateInitiative, deleteInitiative } = useData();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Initiative>>({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const openModal = (mode: 'create' | 'edit', init?: Initiative) => {
+    if (mode === 'edit' && init) {
+      setEditingId(init.id);
+      setEditForm(JSON.parse(JSON.stringify(init))); // Deep copy
+      setIsAdding(false);
+    } else {
+      setEditForm({
+        id: `init_${Date.now()}`,
+        title: '',
+        description: '',
+        fullContent: '',
+        image: '',
+        iconName: 'Heart',
+        color: 'text-blue-400',
+        bgHover: 'group-hover:bg-blue-500/20',
+        textHover: 'group-hover:text-blue-400',
+        stats: []
+      });
+      setIsAdding(true);
+      setEditingId(null);
+    }
+    setModalOpen(true);
+  };
+
+  const addStat = () => {
+    setEditForm(prev => ({
+      ...prev,
+      stats: [...(prev.stats || []), { label: '', value: 0 }]
+    }));
+  };
+
+  const removeStat = (idx: number) => {
+    setEditForm(prev => ({
+      ...prev,
+      stats: (prev.stats || []).filter((_, i) => i !== idx)
+    }));
+  };
+
+  const updateStat = (idx: number, field: string, value: any) => {
+    setEditForm(prev => {
+      const newStats = [...(prev.stats || [])];
+      newStats[idx] = { ...newStats[idx], [field]: value };
+      return { ...prev, stats: newStats };
+    });
+  };
+
+  const addGalleryImage = () => {
+    setEditForm(prev => ({
+      ...prev,
+      // @ts-ignore
+      gallery: [...(prev.gallery || []), '']
+    }));
+  };
+
+  const updateGalleryImage = (index: number, value: string) => {
+    // @ts-ignore
+    const newGallery = [...(editForm.gallery || [])];
+    newGallery[index] = value;
+    setEditForm({ ...editForm, gallery: newGallery });
+  };
+
+  const removeGalleryImage = (index: number) => {
+    // @ts-ignore
+    const newGallery = [...(editForm.gallery || [])];
+    newGallery.splice(index, 1);
+    setEditForm({ ...editForm, gallery: newGallery });
+  };
+
+  const addMilestone = () => {
+    setEditForm(prev => ({
+      ...prev,
+      // @ts-ignore
+      milestones: [...(prev.milestones || []), { date: '', title: '', description: '', status: 'upcoming' }]
+    }));
+  };
+
+  // @ts-ignore
+  const updateMilestone = (index: number, field: keyof any, value: any) => {
+    // @ts-ignore
+    const newMilestones = [...(editForm.milestones || [])];
+    // @ts-ignore
+    newMilestones[index] = { ...newMilestones[index], [field]: value };
+    setEditForm({ ...editForm, milestones: newMilestones });
+  };
+
+  const removeMilestone = (index: number) => {
+    // @ts-ignore
+    const newMilestones = [...(editForm.milestones || [])];
+    newMilestones.splice(index, 1);
+    setEditForm({ ...editForm, milestones: newMilestones });
+  };
+
+  const save = async () => {
+    if (!editForm.title) {
+      alert("Title required");
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      if (isAdding) {
+        await addInitiative(editForm);
+        setIsAdding(false);
+      } else if (editingId) {
+        await updateInitiative(editingId, editForm);
+        setEditingId(null);
+      }
+      setModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to save initiative.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsAdding(false);
+    setEditingId(null);
+    setEditForm({});
+    setModalOpen(false);
+  };
+
+  return (
+    <>
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-white">CSR Initiatives</h2>
+            <p className="text-sm text-gray-500">Manage social impact cards and their live statistics.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <button onClick={() => openModal('create')} className="bg-cindral-blue px-4 py-2 rounded-lg text-white font-bold flex items-center hover:bg-blue-600 transition-colors">
+              <Plus className="w-4 h-4 mr-2" /> Add Initiative
+            </button>
+          </div>
+        </div>
+
+        {viewMode === 'table' ? (
+          <div className="overflow-hidden border border-slate-800 rounded-2xl bg-slate-900/50 backdrop-blur-sm">
+            <table className="min-w-full divide-y divide-slate-800 text-sm">
+              <thead className="bg-slate-900">
+                <tr>
+                  <th className="px-6 py-4 text-left font-semibold text-gray-400">Initiative</th>
+                  <th className="px-6 py-4 text-left font-semibold text-gray-400">Live Impact</th>
+                  <th className="px-6 py-4 text-left font-semibold text-gray-400">Status</th>
+                  <th className="px-6 py-4 text-right font-semibold text-gray-400">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {initiatives.map(init => (
+                  <tr key={init.id} className="hover:bg-slate-800/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-4">
+                        {init.image && <img src={init.image} alt="" className="w-12 h-12 rounded-lg object-cover bg-slate-800" />}
+                        <div>
+                          <div className="font-bold text-white text-base">{init.title}</div>
+                          <div className="text-xs text-slate-500 font-mono mt-0.5">{init.id}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        {(init.stats || []).slice(0, 3).map((s, i) => (
+                          <span key={i} className={`text-xs px-2 py-1 rounded border bg-slate-800 border-slate-700 text-slate-400`}>
+                            {s.label}: {s.value}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        Active
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => openModal('edit', init)} className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          disabled={isProcessing}
+                          onClick={async () => {
+                            if (isProcessing) return;
+                            if (confirm('Are you sure you want to delete this initiative?')) {
+                              setIsProcessing(true);
+                              try {
+                                await deleteInitiative(init.id);
+                              } catch (error) {
+                                console.error(error);
+                              } finally {
+                                setIsProcessing(false);
+                              }
+                            }
+                          }}
+                          className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {initiatives.map((init, idx) => (
+              <div key={idx} className="group relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden border border-slate-700/50 hover:border-blue-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 flex flex-col h-full">
+                {/* Card Header Image */}
+                <div className="relative h-48 overflow-hidden bg-slate-950">
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 opacity-90" />
+                  {init.image ? (
+                    <img src={init.image} alt={init.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-600">
+                      <Heart className="w-12 h-12 opacity-20" />
+                    </div>
+                  )}
+                  <div className="absolute bottom-0 left-0 p-6 z-20">
+                    <div className={`w-10 h-10 rounded-xl bg-slate-800/80 backdrop-blur border border-slate-700 flex items-center justify-center mb-3 text-blue-400 shadow-lg`}>
+                      <Heart className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white group-hover:text-blue-200 transition-colors leading-tight">{init.title}</h3>
+                  </div>
+                  {/* Actions Overlay */}
+                  <div className="absolute top-4 right-4 z-30 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-[-10px] group-hover:translate-y-0 duration-300">
+                    <button onClick={(e) => { e.preventDefault(); openModal('edit', init); }} className="p-2 bg-slate-900/90 backdrop-blur text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg border border-slate-700"><Edit2 className="w-4 h-4" /></button>
+                    <button onClick={async (e) => {
+                      e.preventDefault();
+                      if (confirm('Delete initiative?')) { await deleteInitiative(init.id); }
+                    }} className="p-2 bg-slate-900/90 backdrop-blur text-red-400 rounded-lg hover:bg-red-500 hover:text-white transition-colors shadow-lg border border-slate-700"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                </div>
+
+                <div className="p-6 pt-2 flex flex-col flex-grow">
+                  <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed mb-6 flex-grow border-b border-slate-800 pb-4">
+                    {init.description || "No description provided."}
+                  </p>
+
+                  <div className="space-y-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Live Impact</p>
+                    {init.stats.slice(0, 3).map((s, i) => (
+                      <div key={i} className="flex items-center justify-between bg-slate-950/30 p-2.5 rounded-lg border border-slate-800/50">
+                        <span className="text-slate-400 text-xs font-medium truncate pr-2">{s.label}</span>
+                        <span className="text-white font-mono text-sm font-bold flex items-center">
+                          {s.value}
+                        </span>
+                      </div>
+                    ))}
+                    {(!init.stats || init.stats.length === 0) && (
+                      <div className="text-xs text-slate-600 italic py-2">No stats configured yet.</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <AdminModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={isAdding ? 'Create Initiative' : 'Edit Initiative'}
+        description="Update CSR content, images, and live impact statistics."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField label="Title" value={editForm.title || ''} onChange={(v: string) => setEditForm({ ...editForm, title: v })} />
+          <div className="flex gap-2 items-end">
+            <div className="flex-grow">
+              <InputField label="Icon Name (Lucide)" value={editForm.iconName || ''} onChange={(v: string) => setEditForm({ ...editForm, iconName: v })} />
+            </div>
+            <div className="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center mb-[2px]">
+              {(() => {
+                const name = editForm.iconName || '';
+                const normalized = name.split(/[-_ ]/).map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join('');
+                // @ts-ignore
+                const Icon = LucideIcons[normalized] || LucideIcons[name] || LucideIcons.HelpCircle;
+                return <Icon className="w-5 h-5 text-blue-400" />;
+              })()}
+            </div>
+          </div>
+        </div>
+        <TextAreaField label="Short Description" value={editForm.description || ''} onChange={(v: string) => setEditForm({ ...editForm, description: v })} rows={2} />
+        <InputField label="Cover Image URL" value={editForm.image || ''} onChange={(v: string) => setEditForm({ ...editForm, image: v })} />
+        <TextAreaField label="Full Content (Markdown supported)" value={editForm.fullContent || ''} onChange={(v: string) => setEditForm({ ...editForm, fullContent: v })} rows={6} />
+
+        <div className="border-t border-slate-800 pt-6 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-bold text-white">Impact Stats</h4>
+            <button type="button" onClick={addStat} className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded-lg transition-colors border border-slate-600">
+              + Add Row
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {(editForm.stats || []).map((stat, idx) => (
+              <div key={idx} className="flex gap-2 items-start bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm w-full"
+                      placeholder="Label (e.g. Trees Planted)"
+                      value={stat.label}
+                      onChange={(e) => updateStat(idx, 'label', e.target.value)}
+                    />
+                    <input
+                      className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm w-full"
+                      placeholder="Value (e.g. 5000)"
+                      type="number"
+                      value={stat.value || ''}
+                      onChange={(e) => updateStat(idx, 'value', Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+                <button onClick={() => removeStat(idx)} className="text-slate-500 hover:text-red-400 p-2">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {(!editForm.stats || editForm.stats.length === 0) && (
+              <p className="text-center text-sm text-gray-600 py-4">No stats added yet.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Gallery Section */}
+        <div className="border-t border-slate-800 pt-6 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-bold text-white">Impact Gallery</h4>
+            <button type="button" onClick={addGalleryImage} className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded-lg transition-colors border border-slate-600">
+              + Add Image
+            </button>
+          </div>
+          <div className="space-y-3">
+            {/* @ts-ignore */}
+            {(editForm.gallery || []).map((url, idx) => (
+              <div key={idx} className="flex gap-2 items-center bg-slate-800/50 p-2 rounded-xl border border-slate-800">
+                <img src={url || 'https://via.placeholder.com/40'} alt="" className="w-10 h-10 rounded object-cover bg-slate-900" />
+                <input
+                  className="flex-grow bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm"
+                  placeholder="Image URL"
+                  value={url}
+                  onChange={(e) => updateGalleryImage(idx, e.target.value)}
+                />
+                <button onClick={() => removeGalleryImage(idx)} className="text-slate-500 hover:text-red-400 p-2">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {/* @ts-ignore */}
+            {(!editForm.gallery || editForm.gallery.length === 0) && (
+              <p className="text-center text-sm text-gray-600 py-2">No gallery images added.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Milestones Section */}
+        <div className="border-t border-slate-800 pt-6 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-bold text-white">Milestones</h4>
+            <button type="button" onClick={addMilestone} className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded-lg transition-colors border border-slate-600">
+              + Add Milestone
+            </button>
+          </div>
+          <div className="space-y-4">
+            {/* @ts-ignore */}
+            {(editForm.milestones || []).map((milestone, idx) => (
+              <div key={idx} className="bg-slate-800/50 p-4 rounded-xl border border-slate-800 relative">
+                <button onClick={() => removeMilestone(idx)} className="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-2">
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <input
+                    className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm"
+                    placeholder="Date (e.g. March 2025)"
+                    value={milestone.date}
+                    onChange={(e) => updateMilestone(idx, 'date', e.target.value)}
+                  />
+                  <select
+                    className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm"
+                    value={milestone.status}
+                    onChange={(e) => updateMilestone(idx, 'status', e.target.value)}
+                  >
+                    <option value="upcoming">Upcoming</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <input
+                  className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm w-full mb-3"
+                  placeholder="Title"
+                  value={milestone.title}
+                  onChange={(e) => updateMilestone(idx, 'title', e.target.value)}
+                />
+                <textarea
+                  className="bg-slate-900 border border-slate-700 rounded p-2 text-white text-sm w-full"
+                  placeholder="Description"
+                  rows={2}
+                  value={milestone.description}
+                  onChange={(e) => updateMilestone(idx, 'description', e.target.value)}
+                />
+              </div>
+            ))}
+            {/* @ts-ignore */}
+            {(!editForm.milestones || editForm.milestones.length === 0) && (
+              <p className="text-center text-sm text-gray-600 py-2">No milestones added.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-8 border-t border-slate-800 pt-6">
+          <button onClick={closeModal} className="px-4 py-2 rounded-xl border border-slate-700 text-gray-300 hover:bg-slate-800">Cancel</button>
+          <button
+            onClick={save}
+            disabled={isProcessing}
+            className="px-5 py-2 rounded-xl bg-cindral-blue text-white font-semibold disabled:opacity-60"
+          >
+            {isProcessing ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </AdminModal>
+    </>
+  );
+};
+
 // Tab Button Component
 const TabButton = ({ active, onClick, icon: Icon, label }: any) => (
-  <button 
+  <button
     onClick={onClick}
     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all ${active ? 'bg-cindral-blue text-white shadow-lg shadow-blue-500/20' : 'text-gray-400 hover:text-white hover:bg-slate-800'}`}
   >
@@ -2055,7 +2492,7 @@ const TabButton = ({ active, onClick, icon: Icon, label }: any) => (
 
 // Main Admin Page
 const AdminPage: React.FC = () => {
-  const { isAuthenticated, logout, divisions, projects, team, contactSubmissions, clientProjects, clientInvoices, clientUsers } = useData();
+  const { isAuthenticated, logout, divisions, projects, team, contactSubmissions, clientProjects, clientInvoices, clientUsers, initiatives } = useData();
   const [activeTab, setActiveTab] = useState('dashboard');
 
   if (!isAuthenticated) {
@@ -2066,77 +2503,79 @@ const AdminPage: React.FC = () => {
     <div className="min-h-screen pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* Sidebar */}
           <div className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-slate-800/80 backdrop-blur rounded-3xl border border-slate-700 p-6 sticky top-24">
               <div className="mb-8 px-2">
-                 <h2 className="text-white font-bold text-xl">Admin Panel</h2>
-                 <p className="text-gray-500 text-sm">Cindral CMS</p>
+                <h2 className="text-white font-bold text-xl">Admin Panel</h2>
+                <p className="text-gray-500 text-sm">Cindral CMS</p>
               </div>
-              
+
               <div className="space-y-2">
-                 <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={LayoutDashboard} label="Dashboard" />
-                 <TabButton active={activeTab === 'divisions'} onClick={() => setActiveTab('divisions')} icon={Layers} label="Divisions" />
-                 <TabButton active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={Briefcase} label="Projects" />
-                 <TabButton active={activeTab === 'client-projects'} onClick={() => setActiveTab('client-projects')} icon={Link2} label="Client Projects" />
-                 <TabButton active={activeTab === 'client-billing'} onClick={() => setActiveTab('client-billing')} icon={CreditCard} label="Client Billing" />
-                 <TabButton active={activeTab === 'client-users'} onClick={() => setActiveTab('client-users')} icon={ShieldCheck} label="Client Users" />
-                 <TabButton active={activeTab === 'team'} onClick={() => setActiveTab('team')} icon={Users} label="Team Members" />
-                 <TabButton active={activeTab === 'contact'} onClick={() => setActiveTab('contact')} icon={Mail} label="Contact Requests" />
-                 <TabButton active={activeTab === 'data'} onClick={() => setActiveTab('data')} icon={Database} label="Data Management" />
+                <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={LayoutDashboard} label="Dashboard" />
+                <TabButton active={activeTab === 'divisions'} onClick={() => setActiveTab('divisions')} icon={Layers} label="Divisions" />
+                <TabButton active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={Briefcase} label="Projects" />
+                <TabButton active={activeTab === 'client-projects'} onClick={() => setActiveTab('client-projects')} icon={Link2} label="Client Projects" />
+                <TabButton active={activeTab === 'client-billing'} onClick={() => setActiveTab('client-billing')} icon={CreditCard} label="Client Billing" />
+                <TabButton active={activeTab === 'client-users'} onClick={() => setActiveTab('client-users')} icon={ShieldCheck} label="Client Users" />
+                <TabButton active={activeTab === 'team'} onClick={() => setActiveTab('team')} icon={Users} label="Team Members" />
+                <TabButton active={activeTab === 'contact'} onClick={() => setActiveTab('contact')} icon={Mail} label="Contact Requests" />
+                <TabButton active={activeTab === 'initiatives'} onClick={() => setActiveTab('initiatives')} icon={Heart} label="CSR Initiatives" />
+                <TabButton active={activeTab === 'data'} onClick={() => setActiveTab('data')} icon={Database} label="Data Management" />
               </div>
 
               <div className="mt-8 pt-6 border-t border-slate-700">
-                 <button onClick={logout} className="w-full text-left px-4 py-2 text-red-400 hover:text-red-300 text-sm font-medium flex items-center">
-                   Logout
-                 </button>
+                <button onClick={logout} className="w-full text-left px-4 py-2 text-red-400 hover:text-red-300 text-sm font-medium flex items-center">
+                  Logout
+                </button>
               </div>
             </div>
           </div>
 
           {/* Main Content */}
           <div className="flex-grow">
-             {activeTab === 'dashboard' && (
-               <div className="space-y-8 animate-fade-in-up">
-                 <h2 className="text-3xl font-bold text-white">Dashboard Overview</h2>
-                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                       <h3 className="text-gray-400 text-sm uppercase mb-2">Total Team</h3>
-                       <p className="text-4xl font-bold text-white">{team.length}</p>
-                    </div>
-                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                       <h3 className="text-gray-400 text-sm uppercase mb-2">Projects</h3>
-                       <p className="text-4xl font-bold text-white">{projects.length}</p>
-                    </div>
-                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                       <h3 className="text-gray-400 text-sm uppercase mb-2">Client Portal Projects</h3>
-                       <p className="text-4xl font-bold text-white">{clientProjects.length}</p>
-                    </div>
-                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                       <h3 className="text-gray-400 text-sm uppercase mb-2">Contact Requests</h3>
-                       <p className="text-4xl font-bold text-white">{contactSubmissions.length}</p>
-                       <p className="text-xs text-cindral-blue mt-2">{contactSubmissions.filter(sub => sub.status === 'new').length} new</p>
-                    </div>
-                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                       <h3 className="text-gray-400 text-sm uppercase mb-2">Client Users</h3>
-                       <p className="text-4xl font-bold text-white">{clientUsers.length}</p>
-                    </div>
-                 </div>
-                 <div className="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 text-gray-400">
-                    <p className="text-lg mb-4">Welcome back.</p>
-                    <p>Select a category from the sidebar to create, update, or delete content. Changes are instantly synced with the secure admin API.</p>
-                 </div>
+            {activeTab === 'dashboard' && (
+              <div className="space-y-8 animate-fade-in-up">
+                <h2 className="text-3xl font-bold text-white">Dashboard Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                  <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 className="text-gray-400 text-sm uppercase mb-2">Total Team</h3>
+                    <p className="text-4xl font-bold text-white">{team.length}</p>
+                  </div>
+                  <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 className="text-gray-400 text-sm uppercase mb-2">Projects</h3>
+                    <p className="text-4xl font-bold text-white">{projects.length}</p>
+                  </div>
+                  <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 className="text-gray-400 text-sm uppercase mb-2">Client Portal Projects</h3>
+                    <p className="text-4xl font-bold text-white">{clientProjects.length}</p>
+                  </div>
+                  <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 className="text-gray-400 text-sm uppercase mb-2">Contact Requests</h3>
+                    <p className="text-4xl font-bold text-white">{contactSubmissions.length}</p>
+                    <p className="text-xs text-cindral-blue mt-2">{contactSubmissions.filter(sub => sub.status === 'new').length} new</p>
+                  </div>
+                  <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 className="text-gray-400 text-sm uppercase mb-2">Client Users</h3>
+                    <p className="text-4xl font-bold text-white">{clientUsers.length}</p>
+                  </div>
+                </div>
+                <div className="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 text-gray-400">
+                  <p className="text-lg mb-4">Welcome back.</p>
+                  <p>Select a category from the sidebar to create, update, or delete content. Changes are instantly synced with the secure admin API.</p>
+                </div>
               </div>
-             )}
-             {activeTab === 'divisions' && <ManageDivisions />}
-             {activeTab === 'projects' && <ManageProjects />}
-             {activeTab === 'client-projects' && <ManageClientProjects />}
-             {activeTab === 'client-billing' && <ManageClientInvoices />}
-             {activeTab === 'client-users' && <ManageClientUsers />}
-             {activeTab === 'team' && <ManageTeam />}
-             {activeTab === 'contact' && <ManageSubmissions />}
-             {activeTab === 'data' && <ManageData />}
+            )}
+            {activeTab === 'divisions' && <ManageDivisions />}
+            {activeTab === 'projects' && <ManageProjects />}
+            {activeTab === 'client-projects' && <ManageClientProjects />}
+            {activeTab === 'client-billing' && <ManageClientInvoices />}
+            {activeTab === 'client-users' && <ManageClientUsers />}
+            {activeTab === 'team' && <ManageTeam />}
+            {activeTab === 'initiatives' && <ManageInitiatives />}
+            {activeTab === 'contact' && <ManageSubmissions />}
+            {activeTab === 'data' && <ManageData />}
           </div>
 
         </div>

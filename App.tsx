@@ -7,6 +7,7 @@ import DivisionPage from './pages/DivisionPage';
 import ProjectPage from './pages/ProjectPage';
 import TeamMemberPage from './pages/TeamMemberPage';
 import CSRPage from './pages/CSRPage';
+import CSRInitiativePage from './pages/CSRInitiativePage';
 import AboutPage from './pages/AboutPage';
 import TeamPage from './pages/TeamPage';
 import ContactPage from './pages/ContactPage';
@@ -18,12 +19,11 @@ import ClientPortalPage from './pages/ClientPortalPage';
 import { BRAND, LOGO_URL } from './constants';
 
 // Loading Screen Component
-const PageLoader = ({ isLoading }: { isLoading: boolean }) => {
+export const PageLoader = ({ isLoading }: { isLoading: boolean }) => {
   return (
-    <div 
-      className={`fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out ${
-        isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}
+    <div
+      className={`fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out ${isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
     >
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-cindral-blue/30 blur-2xl rounded-full animate-pulse-slow"></div>
@@ -42,14 +42,14 @@ const MainContent = () => {
   useEffect(() => {
     if (location.pathname !== displayLocation.pathname) {
       setIsLoading(true);
-      
+
       const timer = setTimeout(() => {
         setDisplayLocation(location);
         window.scrollTo(0, 0);
-        
+
         setTimeout(() => {
           setIsLoading(false);
-        }, 500); 
+        }, 500);
       }, 500);
 
       return () => clearTimeout(timer);
@@ -68,6 +68,7 @@ const MainContent = () => {
           <Route path="/project/:id" element={<ProjectPage />} />
           <Route path="/team/:id" element={<TeamMemberPage />} />
           <Route path="/csr" element={<CSRPage />} />
+          <Route path="/csr/:id" element={<CSRInitiativePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/resources/brand-assets" element={<BrandAssetsPage />} />

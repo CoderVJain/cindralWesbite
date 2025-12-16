@@ -58,6 +58,33 @@ export interface CSRStat {
   unit: string;
 }
 
+export interface InitiativeStat {
+  label: string;
+  value: number;
+}
+
+export interface Milestone {
+  date: string;
+  title: string;
+  description: string;
+  status: 'completed' | 'ongoing' | 'upcoming';
+}
+
+export interface Initiative {
+  id: string;
+  title: string;
+  image: string;
+  description: string;
+  fullContent: string;
+  iconName: string;
+  color: string;
+  bgHover: string;
+  textHover: string;
+  stats: InitiativeStat[];
+  gallery: string[];
+  milestones: Milestone[];
+}
+
 export interface Partner {
   name: string;
   type: 'NGO' | 'Corporate' | 'Educational';

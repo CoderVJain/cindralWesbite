@@ -3,8 +3,8 @@ import { Division, DivisionType, Project, TeamMember, CSRStat, Partner, ContactS
 export const BRAND = {
   name: "Cindral",
   logo: {
-     url: "/assets/logo.png",
-     alt: "Cindral Logo"
+    url: "/assets/logo.png",
+    alt: "Cindral Logo"
   },
   colors: {
     primary: '#00AEEF',
@@ -175,9 +175,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 5, totalHours: 30, lastTopic: "Interactive Storytelling" },
     fitnessStats: { activityType: "Jogging", weeklyMinutes: 90, personalBest: "5k in 25m" }
   },
-  { 
-    id: 't5', name: 'Aisha Gupta', role: 'Lead UI/UX Designer', 
-    bio: 'Obsessed with micro-interactions and accessibility, Aisha believes great design goes unnoticed.', 
+  {
+    id: 't5', name: 'Aisha Gupta', role: 'Lead UI/UX Designer',
+    bio: 'Obsessed with micro-interactions and accessibility, Aisha believes great design goes unnoticed.',
     image: getAvatar(5), projectIds: ['p2'], csrActivities: [],
     skills: ['Figma', 'Prototyping', 'User Research', 'Accessibility'],
     interests: ['Pottery', 'Traveling', 'Urban Sketching'],
@@ -185,9 +185,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 30, totalHours: 90, lastTopic: "Web Accessibility Guidelines" },
     fitnessStats: { activityType: "Pilates", weeklyMinutes: 150, personalBest: "Core Strength" }
   },
-  { 
-    id: 't6', name: 'James Wilson', role: 'Senior Backend Engineer', 
-    bio: 'Architecting scalable systems for millions of users. James makes sure Cindral never goes offline.', 
+  {
+    id: 't6', name: 'James Wilson', role: 'Senior Backend Engineer',
+    bio: 'Architecting scalable systems for millions of users. James makes sure Cindral never goes offline.',
     image: getAvatar(6), projectIds: ['p2'], csrActivities: [],
     skills: ['Node.js', 'PostgreSQL', 'Kubernetes', 'Go'],
     interests: ['Cycling', 'Coffee Brewing', 'Open Source'],
@@ -195,9 +195,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 200, totalHours: 450, lastTopic: "Rust Programming" },
     fitnessStats: { activityType: "Cycling", weeklyMinutes: 300, personalBest: "100km Ride" }
   },
-  { 
-    id: 't7', name: 'Yuki Tanaka', role: '3D Artist', 
-    bio: 'Creating digital worlds polygon by polygon. Yuki brings texture and life to our immersive projects.', 
+  {
+    id: 't7', name: 'Yuki Tanaka', role: '3D Artist',
+    bio: 'Creating digital worlds polygon by polygon. Yuki brings texture and life to our immersive projects.',
     image: getAvatar(7), projectIds: ['p3', 'p4'], csrActivities: [],
     skills: ['Maya', 'Substance Painter', 'ZBrush', 'Character Design'],
     interests: ['Anime', 'Fashion Design', 'Sculpting'],
@@ -205,9 +205,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 15, totalHours: 55, lastTopic: "Unreal Engine 5 Nanite" },
     fitnessStats: { activityType: "Swimming", weeklyMinutes: 120, personalBest: "2km Swim" }
   },
-  { 
-    id: 't8', name: 'Omar Farooq', role: 'AI Researcher', 
-    bio: 'Specializing in LLMs and generative art models. Omar bridges the gap between math and magic.', 
+  {
+    id: 't8', name: 'Omar Farooq', role: 'AI Researcher',
+    bio: 'Specializing in LLMs and generative art models. Omar bridges the gap between math and magic.',
     image: getAvatar(8), projectIds: ['p1'], csrActivities: [],
     skills: ['PyTorch', 'TensorFlow', 'NLP', 'Generative Adversarial Networks'],
     interests: ['Chess', 'Philosophy', 'Electronic Music'],
@@ -215,9 +215,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 60, totalHours: 180, lastTopic: "Transformer Architectures" },
     fitnessStats: { activityType: "Calisthenics", weeklyMinutes: 100, personalBest: "20 Pullups" }
   },
-  { 
-    id: 't9', name: 'Sophie Dubois', role: 'Project Manager', 
-    bio: 'The glue that holds our chaotic creativity together. Sophie ensures we ship on time, every time.', 
+  {
+    id: 't9', name: 'Sophie Dubois', role: 'Project Manager',
+    bio: 'The glue that holds our chaotic creativity together. Sophie ensures we ship on time, every time.',
     image: getAvatar(9), projectIds: ['p1', 'p2', 'p3', 'p4'], csrActivities: [],
     skills: ['Agile', 'Scrum', 'Risk Management', 'Communication'],
     interests: ['Baking', 'Yoga', 'Puzzle Games'],
@@ -225,9 +225,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 4, totalHours: 20, lastTopic: "Psychological Safety in Teams" },
     fitnessStats: { activityType: "Running", weeklyMinutes: 120, personalBest: "Marathon Finisher" }
   },
-  { 
-    id: 't10', name: 'Lucas Silva', role: 'Unity Developer', 
-    bio: 'Turning code into gameplay mechanics. Lucas creates the fun factor in our games.', 
+  {
+    id: 't10', name: 'Lucas Silva', role: 'Unity Developer',
+    bio: 'Turning code into gameplay mechanics. Lucas creates the fun factor in our games.',
     image: getAvatar(10), projectIds: ['p4'], csrActivities: [],
     skills: ['C#', 'Physics Engines', 'Game Mechanics', 'Optimization'],
     interests: ['Skateboarding', 'Synthesizers', 'Retro Gaming'],
@@ -235,9 +235,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 22, totalHours: 66, lastTopic: "Shader Graph" },
     fitnessStats: { activityType: "Skateboarding", weeklyMinutes: 200, personalBest: "Kickflip" }
   },
-  { 
-    id: 't11', name: 'Nina Patel', role: 'Frontend Developer', 
-    bio: 'Pixel perfectionist and React enthusiast. Nina makes the web look beautiful on any device.', 
+  {
+    id: 't11', name: 'Nina Patel', role: 'Frontend Developer',
+    bio: 'Pixel perfectionist and React enthusiast. Nina makes the web look beautiful on any device.',
     image: getAvatar(11), projectIds: ['p2'], csrActivities: [],
     skills: ['React', 'TypeScript', 'Tailwind CSS', 'WebGL'],
     interests: ['Photography', 'Interior Design', 'Cooking'],
@@ -245,9 +245,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 10, totalHours: 40, lastTopic: "Three.js" },
     fitnessStats: { activityType: "Zumba", weeklyMinutes: 120, personalBest: "Dance Marathon" }
   },
-  { 
-    id: 't12', name: 'Robert Chang', role: 'DevOps Engineer', 
-    bio: 'Keeping the servers cool and the pipelines green. Robert loves automation.', 
+  {
+    id: 't12', name: 'Robert Chang', role: 'DevOps Engineer',
+    bio: 'Keeping the servers cool and the pipelines green. Robert loves automation.',
     image: getAvatar(12), projectIds: ['p2'], csrActivities: [],
     skills: ['AWS', 'Docker', 'Terraform', 'CI/CD'],
     interests: ['Home Automation', 'Woodworking', 'Sci-Fi Movies'],
@@ -255,9 +255,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 33, totalHours: 110, lastTopic: "eBPF" },
     fitnessStats: { activityType: "Hiking", weeklyMinutes: 180, personalBest: "Mt. Fuji" }
   },
-  { 
-    id: 't13', name: 'Emma Lewis', role: 'Content Strategist', 
-    bio: 'Giving voice to our digital creations. Emma ensures our message is clear and compelling.', 
+  {
+    id: 't13', name: 'Emma Lewis', role: 'Content Strategist',
+    bio: 'Giving voice to our digital creations. Emma ensures our message is clear and compelling.',
     image: getAvatar(13), projectIds: ['p1'], csrActivities: [],
     skills: ['Copywriting', 'SEO', 'Brand Storytelling', 'Social Media'],
     interests: ['Poetry', 'Vintage Shopping', 'Documentaries'],
@@ -265,9 +265,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 8, totalHours: 25, lastTopic: "Behavioral Economics" },
     fitnessStats: { activityType: "Tennis", weeklyMinutes: 120, personalBest: "Club Champ" }
   },
-  { 
-    id: 't14', name: 'Klaus Müller', role: 'Sound Designer', 
-    bio: 'Creating immersive soundscapes for VR and Games. Klaus knows that hearing is believing.', 
+  {
+    id: 't14', name: 'Klaus Müller', role: 'Sound Designer',
+    bio: 'Creating immersive soundscapes for VR and Games. Klaus knows that hearing is believing.',
     image: getAvatar(14), projectIds: ['p3', 'p4'], csrActivities: [],
     skills: ['Ableton Live', 'FMOD', 'Sound Synthesis', 'Field Recording'],
     interests: ['Modular Synths', 'Hiking', 'Acoustics'],
@@ -275,9 +275,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 18, totalHours: 54, lastTopic: "Ambisonics" },
     fitnessStats: { activityType: "Crossfit", weeklyMinutes: 150, personalBest: "Deadlift 100kg" }
   },
-  { 
-    id: 't15', name: 'Priya Singh', role: 'QA Lead', 
-    bio: 'If it breaks, Priya found it first. She is the guardian of our quality.', 
+  {
+    id: 't15', name: 'Priya Singh', role: 'QA Lead',
+    bio: 'If it breaks, Priya found it first. She is the guardian of our quality.',
     image: getAvatar(15), projectIds: ['p2', 'p4'], csrActivities: [],
     skills: ['Automated Testing', 'Bug Tracking', 'Performance Testing', 'Detail Oriented'],
     interests: ['Mystery Novels', 'Gardening', 'Sudoku'],
@@ -285,9 +285,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 25, totalHours: 75, lastTopic: "Cypress Testing" },
     fitnessStats: { activityType: "Badminton", weeklyMinutes: 90, personalBest: "Regional Team" }
   },
-  { 
-    id: 't16', name: 'Tom Baker', role: 'AR Specialist', 
-    bio: 'Bringing magic to the mundane world. Tom layers digital information over physical reality.', 
+  {
+    id: 't16', name: 'Tom Baker', role: 'AR Specialist',
+    bio: 'Bringing magic to the mundane world. Tom layers digital information over physical reality.',
     image: getAvatar(16), projectIds: ['p3'], csrActivities: [],
     skills: ['Spark AR', 'Computer Vision', 'Mobile Development', '3D Scanning'],
     interests: ['Magic Tricks', 'Street Art', 'Drones'],
@@ -295,9 +295,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 50, totalHours: 150, lastTopic: "LiDAR Scanning" },
     fitnessStats: { activityType: "Parkour", weeklyMinutes: 120, personalBest: "Wall Run" }
   },
-  { 
-    id: 't17', name: 'Lia Zhang', role: 'Marketing Lead', 
-    bio: 'Sharing Cindral\'s story with the world. Lia connects our innovations with the people who need them.', 
+  {
+    id: 't17', name: 'Lia Zhang', role: 'Marketing Lead',
+    bio: 'Sharing Cindral\'s story with the world. Lia connects our innovations with the people who need them.',
     image: getAvatar(17), projectIds: [], csrActivities: [],
     skills: ['Digital Marketing', 'Data Analysis', 'Public Relations', 'Event Planning'],
     interests: ['Travel Photography', 'Food Blogging', 'Languages'],
@@ -305,9 +305,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 7, totalHours: 21, lastTopic: "Growth Hacking" },
     fitnessStats: { activityType: "Salsa", weeklyMinutes: 180, personalBest: "Competition Win" }
   },
-  { 
-    id: 't18', name: 'Hassan Reid', role: 'Data Scientist', 
-    bio: 'Finding patterns in the noise. Hassan turns raw data into actionable insights.', 
+  {
+    id: 't18', name: 'Hassan Reid', role: 'Data Scientist',
+    bio: 'Finding patterns in the noise. Hassan turns raw data into actionable insights.',
     image: getAvatar(18), projectIds: ['p1', 'p2'], csrActivities: [],
     skills: ['Python', 'SQL', 'Machine Learning', 'Data Visualization'],
     interests: ['Basketball', 'Statistics', 'Podcasts'],
@@ -315,9 +315,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 40, totalHours: 120, lastTopic: "Bayesian Statistics" },
     fitnessStats: { activityType: "Basketball", weeklyMinutes: 240, personalBest: "30pts Game" }
   },
-  { 
-    id: 't19', name: 'Zoe O\'Connell', role: 'Concept Artist', 
-    bio: 'Visualizing the impossible before it is built. Zoe draws the blueprints of our dreams.', 
+  {
+    id: 't19', name: 'Zoe O\'Connell', role: 'Concept Artist',
+    bio: 'Visualizing the impossible before it is built. Zoe draws the blueprints of our dreams.',
     image: getAvatar(19), projectIds: ['p4', 'p3'], csrActivities: [],
     skills: ['Photoshop', 'Illustration', 'Color Theory', 'Storyboarding'],
     interests: ['Comics', 'Cosplay', 'History'],
@@ -325,9 +325,9 @@ export const TEAM: TeamMember[] = [
     learningStats: { currentStreak: 14, totalHours: 50, lastTopic: "Anatomy" },
     fitnessStats: { activityType: "Archery", weeklyMinutes: 60, personalBest: "Bullseye Streak" }
   },
-  { 
-    id: 't20', name: 'Miguel Torres', role: 'Intern', 
-    bio: 'Learning fast and breaking things safely. Miguel is our newest spark of energy.', 
+  {
+    id: 't20', name: 'Miguel Torres', role: 'Intern',
+    bio: 'Learning fast and breaking things safely. Miguel is our newest spark of energy.',
     image: getAvatar(20), projectIds: ['p1'], csrActivities: [],
     skills: ['HTML/CSS', 'JavaScript', 'Git', 'Curiosity'],
     interests: ['Surfing', 'Music Festivals', 'Learning'],
@@ -478,6 +478,96 @@ export const PARTNERS: Partner[] = [
   { name: 'GreenEarth NGO', type: 'NGO', logo: 'https://picsum.photos/seed/ngo1/100/100' },
   { name: 'TechEdu Alliance', type: 'Educational', logo: 'https://picsum.photos/seed/edu1/100/100' },
   { name: 'Global Care', type: 'NGO', logo: 'https://picsum.photos/seed/ngo2/100/100' }
+];
+
+// Featured Stats to display on the CSR landing page
+export const FEATURED_STATS = [
+  'Students Mentored',
+  'Bootcamps Held',
+  'Scholarships',
+  'Trees Planted',
+  'CO2 Offset'
+];
+
+export const INITIATIVES = [
+  {
+    id: 'tech-for-future',
+    title: 'Tech For Future',
+    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1600',
+    description: 'Bridging the digital divide by equipping the next generation with coding skills and hardware. We partner with rural schools to provide bootcamps, mentorship, and resources.',
+    fullContent: 'In a world increasingly driven by technology, access to digital education is a fundamental right. "Tech For Future" is our flagship educational initiative designed to democratize access to computer science education. We focus on underfunded rural schools where students often lack access to modern hardware and mentorship.\n\nOur program goes beyond just donating laptops. We provide a structured 12-week coding bootcamp where Cindral engineers volunteer their weekends to teach Python and JavaScript. We also sponsor high-speed internet connections for these schools for a full year.',
+    iconName: 'BookOpen',
+    color: 'text-blue-400',
+    bgHover: 'group-hover:bg-blue-500/20',
+    textHover: 'group-hover:text-blue-400',
+    stats: [
+      { label: 'Students Mentored', value: 1240 },
+      { label: 'Bootcamps Held', value: 45 },
+      { label: 'Scholarships', value: 200 }
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800'
+    ],
+    milestones: [
+      { date: 'December 2025', title: 'National Rollout', description: 'Expanding curriculum to 500+ schools nationwide.', status: 'upcoming' },
+      { date: 'June 2025', title: 'Advanced Lab Setup', description: 'Installing high-perf compute nodes in partner schools.', status: 'upcoming' },
+      { date: 'March 2024', title: 'Pilot Launch', description: 'First cohort of 50 students graduated with distinction.', status: 'completed' }
+    ]
+  },
+  {
+    id: 'bonsai-project',
+    title: 'The Bonsai Project',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600',
+    description: 'A commitment to patience and growth. For every commercial project we complete, we plant a Bonsai tree and fund reforestation efforts in biodiversity hotspots.',
+    fullContent: 'The Bonsai Project is our symbolic and practical commitment to the environment. Bonsai trees represent patience, long-term vision, and careful nurturing—values that mirror our approach to software engineering. But we know symbolism isn\'t enough.\n\nFor every project delivered, we not only plant a commemorative Bonsai in our headquarters greenhouse but also donate to plant 100 native trees in deforested regions via our partners. This ensures a tangible, positive carbon impact that scales with our business success.',
+    iconName: 'Sprout',
+    color: 'text-green-400',
+    bgHover: 'group-hover:bg-green-500/20',
+    textHover: 'group-hover:text-green-400',
+    stats: [
+      { label: 'Trees Planted', value: 8500 },
+      { label: 'CO2 Offset', value: 120 },
+      { label: 'Species Protected', value: 14 }
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800', // Bonsai
+      'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80&w=800', // Forest
+      'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=800'  // Tree planting
+    ],
+    milestones: [
+      { date: 'September 2025', title: 'Biodiversity Index', description: 'Partnering with ecologists to track species return rates.', status: 'upcoming' },
+      { date: 'March 2025', title: '10,000th Tree', description: 'Hitting the major milestone of 10k trees planted.', status: 'completed' },
+      { date: 'June 2023', title: 'Seedling Project', description: 'Started our own nursery for native species.', status: 'completed' }
+    ]
+  },
+  {
+    id: 'npo-digital',
+    title: 'NPO Digital Transformation',
+    image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1600',
+    description: 'Empowering non-profits with enterprise-grade tech. We offer pro-bono digital transformation services to NGOs to help them scale their impact.',
+    fullContent: 'Non-profits often do the most important work with the fewest resources. Our "NPO Digital Transformation" initiative aims to fix this efficiency gap. We identify high-impact NGOs and treat them exactly like our Fortune 500 clients—providing them with custom software, data analytics dashboards, and cloud infrastructure optimization.\n\nEverything is provided pro-bono. By streamlining their operations and donor management systems, we help them spend less time on administration and more time on their core mission.',
+    iconName: 'Laptop',
+    color: 'text-purple-400',
+    bgHover: 'group-hover:bg-purple-500/20',
+    textHover: 'group-hover:text-purple-400',
+    stats: [
+      { label: 'NGOs Digitized', value: 18 },
+      { label: 'Volunteer Hours', value: 4200 },
+      { label: 'Cost Saved', value: 1.2 }
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800', // Tech meeting
+      'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800', // Computer lab
+      'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800'  // Collaboration
+    ],
+    milestones: [
+      { date: 'December 2025', title: 'AI for Good Hackathon', description: 'Global event connecting devs with NPO challenges.', status: 'upcoming' },
+      { date: 'June 2024', title: 'Cloud Migration', description: 'Moved 10 partner NGOs to secure cloud infra.', status: 'completed' },
+      { date: 'March 2024', title: 'Program Start', description: 'Officially launched the pro-bono division.', status: 'completed' }
+    ]
+  }
 ];
 
 export const INITIAL_CONTACT_SUBMISSIONS: ContactSubmission[] = [];

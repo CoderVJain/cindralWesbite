@@ -5,9 +5,9 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { DIVISIONS, PROJECTS, TEAM, CLIENT_PORTAL_PROJECTS, CLIENT_INVOICES } from '../constants';
+import { DIVISIONS, PROJECTS, TEAM, CLIENT_PORTAL_PROJECTS, CLIENT_INVOICES, INITIATIVES } from '../constants';
 import { DivisionType } from '../types';
-import type { ContactSubmission, Division, Project, TeamMember, ClientProject, ClientInvoice, ClientUser } from '../types';
+import type { ContactSubmission, Division, Project, TeamMember, ClientProject, ClientInvoice, ClientUser, Initiative } from '../types';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), override: true });
 dotenv.config();
@@ -20,6 +20,7 @@ type DBShape = {
   clientProjects: ClientProject[];
   clientInvoices: ClientInvoice[];
   clientUsers: ClientUser[];
+  initiatives: Initiative[];
 };
 
 const seedData = (): DBShape => ({
@@ -29,7 +30,8 @@ const seedData = (): DBShape => ({
   contactSubmissions: [],
   clientProjects: JSON.parse(JSON.stringify(CLIENT_PORTAL_PROJECTS)),
   clientInvoices: JSON.parse(JSON.stringify(CLIENT_INVOICES)),
-  clientUsers: []
+  clientUsers: [],
+  initiatives: JSON.parse(JSON.stringify(INITIATIVES))
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -61,13 +63,15 @@ async function readDb(): Promise<DBShape> {
     contactSubmissions: parsed.contactSubmissions || [],
     clientProjects: Array.isArray(parsed.clientProjects) ? parsed.clientProjects : JSON.parse(JSON.stringify(CLIENT_PORTAL_PROJECTS)),
     clientInvoices: Array.isArray(parsed.clientInvoices) ? parsed.clientInvoices : JSON.parse(JSON.stringify(CLIENT_INVOICES)),
-    clientUsers: Array.isArray(parsed.clientUsers) ? parsed.clientUsers : []
+    clientUsers: Array.isArray(parsed.clientUsers) ? parsed.clientUsers : [],
+    initiatives: Array.isArray(parsed.initiatives) ? parsed.initiatives : JSON.parse(JSON.stringify(INITIATIVES))
   };
 
   const needsPersist =
     !Array.isArray(parsed.clientProjects) ||
     !Array.isArray(parsed.clientInvoices) ||
-    !Array.isArray(parsed.clientUsers);
+    !Array.isArray(parsed.clientUsers) ||
+    !Array.isArray(parsed.initiatives);
 
   if (needsPersist) {
     await writeDb(next);
@@ -485,6 +489,56 @@ app.delete('/api/client-users/:id', requireAuth, async (req, res) => {
 });
 
 
+// Initiatives CRUD
+app.get('/api/initiatives', async (_req, res) => {
+  const data = await readDb();
+  return res.json(data.initiatives);
+});
+
+app.post('/api/initiatives', requireAuth, async (req, res) => {
+  const payload = req.body as Partial<Initiative>;
+  if (!payload.title) {
+    return res.status(400).json({ message: 'Title is required' });
+  }
+  const data = await readDb();
+  const newInitiative: Initiative = {
+    id: payload.id || `init_${nanoid(8)}`,
+    title: payload.title,
+    image: payload.image || '',
+    description: payload.description || '',
+    fullContent: payload.fullContent || '',
+    iconName: payload.iconName || 'Heart',
+    color: payload.color || 'text-white',
+    bgHover: payload.bgHover || '',
+    textHover: payload.textHover || '',
+    stats: Array.isArray(payload.stats) ? payload.stats : []
+  };
+  data.initiatives.push(newInitiative);
+  await writeDb(data);
+  return res.status(201).json(newInitiative);
+});
+
+app.put('/api/initiatives/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const payload = req.body as Partial<Initiative>;
+  const data = await readDb();
+  const index = data.initiatives.findIndex(i => i.id === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Initiative not found' });
+  }
+  data.initiatives[index] = { ...data.initiatives[index], ...payload, id };
+  await writeDb(data);
+  return res.json(data.initiatives[index]);
+});
+
+app.delete('/api/initiatives/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const data = await readDb();
+  data.initiatives = data.initiatives.filter(i => i.id !== id);
+  await writeDb(data);
+  return res.status(204).end();
+});
+
 // Data management helpers
 app.get('/api/data/export', requireAuth, async (_req, res) => {
   const data = await readDb();
@@ -503,7 +557,8 @@ app.post('/api/data/import', requireAuth, async (req, res) => {
     contactSubmissions: Array.isArray(payload.contactSubmissions) ? (payload.contactSubmissions as ContactSubmission[]) : [],
     clientProjects: Array.isArray((payload as any).clientProjects) ? ((payload as any).clientProjects as ClientProject[]) : [],
     clientInvoices: Array.isArray((payload as any).clientInvoices) ? ((payload as any).clientInvoices as ClientInvoice[]) : [],
-    clientUsers: Array.isArray((payload as any).clientUsers) ? ((payload as any).clientUsers as ClientUser[]) : []
+    clientUsers: Array.isArray((payload as any).clientUsers) ? ((payload as any).clientUsers as ClientUser[]) : [],
+    initiatives: Array.isArray((payload as any).initiatives) ? ((payload as any).initiatives as Initiative[]) : []
   };
   await writeDb(next);
   return res.json(next);
