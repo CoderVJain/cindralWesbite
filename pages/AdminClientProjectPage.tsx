@@ -190,7 +190,7 @@ const AdminClientProjectPage: React.FC = () => {
 
   const addTimelineItem = async () => {
     if (!newTimeline.label.trim() || !newTimeline.date.trim()) return;
-    const timeline = [...(project.timeline || []), { id: `tl_${Date.now()}`, ...newTimeline }];
+    const timeline = [...(project.timeline || []), { id: `tl_${Date.now()}`, ...newTimeline } as any];
     await persistUpdate({ timeline });
     setNewTimeline({ label: '', date: '', status: 'active', description: '' });
   };
@@ -209,7 +209,7 @@ const AdminClientProjectPage: React.FC = () => {
   const saveTimelineEdit = async () => {
     if (!editingTimelineId) return;
     const timeline = (project.timeline || []).map(item =>
-      item.id === editingTimelineId ? { ...item, ...timelineDraft } : item
+      item.id === editingTimelineId ? { ...item, ...timelineDraft } as any : item
     );
     await persistUpdate({ timeline });
     setEditingTimelineId(null);
@@ -221,7 +221,7 @@ const AdminClientProjectPage: React.FC = () => {
 
   const addLinkItem = async () => {
     if (!newLink.label.trim() || !newLink.url.trim()) return;
-    const links = [...(project.links || []), { id: `link_${Date.now()}`, ...newLink }];
+    const links = [...(project.links || []), { id: `link_${Date.now()}`, ...newLink } as any];
     await persistUpdate({ links });
     setNewLink({ label: '', url: '', type: 'doc', description: '' });
   };
@@ -277,7 +277,7 @@ const AdminClientProjectPage: React.FC = () => {
           summary: `Scheduled on ${meetingInfo.date} at ${meetingInfo.time}. Meet: ${url}${note ? ` — Note: ${note}` : ''}`,
           author: 'Admin',
           date: meetingInfo.date,
-          type: 'note'
+          type: 'note' as const
         }
       ],
       links: [
@@ -286,7 +286,7 @@ const AdminClientProjectPage: React.FC = () => {
           id: `link_meet_${Date.now()}`,
           label: `Meet — ${meetingInfo.title}`,
           url,
-          type: 'meeting',
+          type: 'meeting' as any,
           description: `Scheduled ${meetingInfo.date} ${meetingInfo.time}`
         }
       ]
@@ -1042,8 +1042,8 @@ const AdminClientProjectPage: React.FC = () => {
                 {invoicesForProject.map(invoice => {
                   const badge =
                     invoice.status === 'paid' ? 'bg-emerald-500/10 text-emerald-200 border-emerald-500/30' :
-                    invoice.status === 'overdue' ? 'bg-rose-500/10 text-rose-200 border-rose-500/30' :
-                    'bg-amber-500/10 text-amber-200 border-amber-500/30';
+                      invoice.status === 'overdue' ? 'bg-rose-500/10 text-rose-200 border-rose-500/30' :
+                        'bg-amber-500/10 text-amber-200 border-amber-500/30';
                   return (
                     <div key={invoice.id} className="p-3 rounded-xl border border-slate-800 bg-slate-900/70">
                       <div className="flex items-start justify-between gap-3">

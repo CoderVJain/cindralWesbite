@@ -10,6 +10,7 @@ import type {
   ClientUser,
   Initiative
 } from '../types';
+import dbData from '../server/data/db.json';
 
 type ContactFormInput = {
   firstName: string;
@@ -61,8 +62,10 @@ interface DataContextType {
   resetData: () => Promise<void>;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 const TOKEN_STORAGE_KEY = 'cindral_admin_token';
+
+// Helper to generate IDs roughly like nanoid
+const generateId = () => Math.random().toString(36).substring(2, 9);
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
@@ -76,333 +79,182 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [contactSubmissions, setContactSubmissions] = useState<ContactSubmission[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem(TOKEN_STORAGE_KEY));
-
-  const clearAuth = useCallback(() => {
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
-    setAuthToken(null);
-    setContactSubmissions([]);
-  }, []);
-
-  const fetchAPI = useCallback(
-    async (
-      path: string,
-      options: RequestInit = {},
-      opts: { skipAuth?: boolean; tokenOverride?: string } = {}
-    ) => {
-      const headers = new Headers(options.headers as HeadersInit);
-      const hasBody = options.body !== undefined && !(options.body instanceof FormData);
-      if (hasBody && !headers.has('Content-Type')) {
-        headers.set('Content-Type', 'application/json');
-      }
-      const tokenToUse = opts.tokenOverride ?? authToken;
-      if (!opts.skipAuth && tokenToUse) {
-        headers.set('Authorization', `Bearer ${tokenToUse}`);
-      }
-
-      const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...options,
-        headers
-      });
-
-      if (response.status === 401) {
-        clearAuth();
-        throw new Error('Unauthorized');
-      }
-
-      if (!response.ok) {
-        let message = 'Request failed';
-        try {
-          const body = await response.json();
-          message = body?.message || message;
-        } catch {
-          // ignore
-        }
-        throw new Error(message);
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        return null;
-      }
-      return response.json();
-    },
-    [authToken, clearAuth]
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!localStorage.getItem(TOKEN_STORAGE_KEY));
 
   const loadBaseData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const clientUsersPromise = authToken ? fetchAPI('/api/client-users') : Promise.resolve([]);
-      const [fetchedDivisions, fetchedProjects, fetchedTeam, fetchedClientProjects, fetchedClientInvoices, fetchedClientUsers, fetchedInitiatives] = await Promise.all([
-        fetchAPI('/api/divisions'),
-        fetchAPI('/api/projects'),
-        fetchAPI('/api/team'),
-        fetchAPI('/api/client-projects'),
-        fetchAPI('/api/client-invoices'),
-        clientUsersPromise,
-        fetchAPI('/api/initiatives')
-      ]);
-      setDivisions(fetchedDivisions || []);
-      setProjects(fetchedProjects || []);
-      setTeam(fetchedTeam || []);
-      setClientProjects(fetchedClientProjects || []);
-      setClientInvoices(fetchedClientInvoices || []);
-      setClientUsers(fetchedClientUsers || []);
-      setInitiatives(fetchedInitiatives || []);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setDivisions(dbData.divisions as Division[]);
+      setProjects(dbData.projects as Project[]);
+      setTeam(dbData.team as TeamMember[]);
+      setClientProjects(dbData.clientProjects as unknown as ClientProject[]);
+      setClientInvoices(dbData.clientInvoices as unknown as ClientInvoice[]);
+      setClientUsers(dbData.clientUsers as unknown as ClientUser[]);
+      setInitiatives(dbData.initiatives as Initiative[]);
+      // Contact submissions are empty initially in static mode as they aren't persistable
+      setContactSubmissions((dbData.contactSubmissions || []) as unknown as ContactSubmission[]);
     } catch (error) {
       console.error('Failed to load site data', error);
     } finally {
       setIsLoading(false);
     }
-  }, [fetchAPI, authToken]);
-
-  const fetchContactSubmissions = useCallback(
-    async (tokenOverride?: string) => {
-      const token = tokenOverride ?? authToken;
-      if (!token) return;
-      try {
-        const data = await fetchAPI('/api/contact-submissions', {}, { tokenOverride: token });
-        setContactSubmissions(data || []);
-      } catch (error) {
-        console.error('Failed to load contact submissions', error);
-      }
-    },
-    [authToken, fetchAPI]
-  );
+  }, []);
 
   useEffect(() => {
     loadBaseData();
   }, [loadBaseData]);
 
-  useEffect(() => {
-    if (authToken) {
-      fetchContactSubmissions();
-    }
-  }, [authToken, fetchContactSubmissions]);
-
-  const refreshData = useCallback(async () => {
+  const refreshData = async () => {
+    // In static mode, refresh essentially resets to initial JSON state
+    // but here we might want to keep local edits? 
+    // For now, let's just re-load base which resets changes, 
+    // effectively simulating "unsaved" changes being lost on refresh.
     await loadBaseData();
-    if (authToken) {
-      await fetchContactSubmissions();
-    }
-  }, [authToken, fetchContactSubmissions, loadBaseData]);
+  };
 
   const login = async (password: string) => {
-    try {
-      const result = await fetchAPI(
-        '/api/login',
-        {
-          method: 'POST',
-          body: JSON.stringify({ password })
-        },
-        { skipAuth: true }
-      );
-
-      if (result?.token) {
-        localStorage.setItem(TOKEN_STORAGE_KEY, result.token);
-        setAuthToken(result.token);
-        await fetchContactSubmissions(result.token);
-        return true;
-      }
-    } catch (error) {
-      console.error('Login failed', error);
+    // Mock login - accept any non-empty password
+    if (password) {
+      localStorage.setItem(TOKEN_STORAGE_KEY, 'mock-token');
+      setIsAuthenticated(true);
+      return true;
     }
     return false;
   };
 
   const logout = () => {
-    if (authToken) {
-      fetchAPI('/api/logout', { method: 'POST' }).catch(() => undefined);
-    }
-    clearAuth();
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    setIsAuthenticated(false);
   };
 
   const submitContactForm = async (payload: ContactFormInput) => {
-    await fetchAPI(
-      '/api/contact',
-      {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      },
-      { skipAuth: true }
-    );
-    if (authToken) {
-      await fetchContactSubmissions();
-    }
+    console.log('Contact Form Submitted (Static Mode):', payload);
+    const newSubmission = {
+      id: generateId(),
+      ...payload,
+      status: 'new',
+      createdAt: new Date().toISOString()
+    };
+    // Update local state to show it in admin panel temporarily
+    setContactSubmissions(prev => [newSubmission as unknown as ContactSubmission, ...prev]);
   };
 
+  // --- CRUD Operations (Local State Only) ---
+
   const addDivision = async (division: Partial<Division>) => {
-    const created = await fetchAPI('/api/divisions', {
-      method: 'POST',
-      body: JSON.stringify(division)
-    });
-    setDivisions(prev => [...prev, created]);
+    const newDiv = { ...division, id: generateId() } as Division;
+    setDivisions(prev => [...prev, newDiv]);
   };
 
   const updateDivision = async (id: string, data: Partial<Division>) => {
-    const updated = await fetchAPI(`/api/divisions/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setDivisions(prev => prev.map(div => (div.id === id ? updated : div)));
+    setDivisions(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteDivision = async (id: string) => {
-    await fetchAPI(`/api/divisions/${id}`, { method: 'DELETE' });
-    setDivisions(prev => prev.filter(div => div.id !== id));
+    setDivisions(prev => prev.filter(item => item.id !== id));
   };
 
   const addProject = async (project: Partial<Project>) => {
-    const created = await fetchAPI('/api/projects', {
-      method: 'POST',
-      body: JSON.stringify(project)
-    });
-    setProjects(prev => [...prev, created]);
+    const newProject = { ...project, id: generateId() } as Project;
+    setProjects(prev => [...prev, newProject]);
   };
 
   const updateProject = async (id: string, data: Partial<Project>) => {
-    const updated = await fetchAPI(`/api/projects/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setProjects(prev => prev.map(project => (project.id === id ? updated : project)));
+    setProjects(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteProject = async (id: string) => {
-    await fetchAPI(`/api/projects/${id}`, { method: 'DELETE' });
-    setProjects(prev => prev.filter(project => project.id !== id));
+    setProjects(prev => prev.filter(item => item.id !== id));
   };
 
   const addTeamMember = async (member: Partial<TeamMember>) => {
-    const created = await fetchAPI('/api/team', {
-      method: 'POST',
-      body: JSON.stringify(member)
-    });
-    setTeam(prev => [...prev, created]);
+    const newMember = { ...member, id: generateId() } as TeamMember;
+    setTeam(prev => [...prev, newMember]);
   };
 
   const updateTeamMember = async (id: string, data: Partial<TeamMember>) => {
-    const updated = await fetchAPI(`/api/team/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setTeam(prev => prev.map(member => (member.id === id ? updated : member)));
+    setTeam(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteTeamMember = async (id: string) => {
-    await fetchAPI(`/api/team/${id}`, { method: 'DELETE' });
-    setTeam(prev => prev.filter(member => member.id !== id));
+    setTeam(prev => prev.filter(item => item.id !== id));
   };
 
   const addClientProject = async (project: Partial<ClientProject>) => {
-    const created = await fetchAPI('/api/client-projects', {
-      method: 'POST',
-      body: JSON.stringify(project)
-    });
-    setClientProjects(prev => [...prev, created]);
+    const newProject = { ...project, id: generateId() } as ClientProject;
+    setClientProjects(prev => [...prev, newProject]);
   };
 
   const updateClientProject = async (id: string, data: Partial<ClientProject>) => {
-    const updated = await fetchAPI(`/api/client-projects/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setClientProjects(prev => prev.map(project => (project.id === id ? updated : project)));
+    setClientProjects(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteClientProject = async (id: string) => {
-    await fetchAPI(`/api/client-projects/${id}`, { method: 'DELETE' });
-    setClientProjects(prev => prev.filter(project => project.id !== id));
+    setClientProjects(prev => prev.filter(item => item.id !== id));
   };
 
   const addClientInvoice = async (invoice: Partial<ClientInvoice>) => {
-    const created = await fetchAPI('/api/client-invoices', {
-      method: 'POST',
-      body: JSON.stringify(invoice)
-    });
-    setClientInvoices(prev => [...prev, created]);
+    const newInv = { ...invoice, id: generateId() } as ClientInvoice;
+    setClientInvoices(prev => [...prev, newInv]);
   };
 
   const updateClientInvoice = async (id: string, data: Partial<ClientInvoice>) => {
-    const updated = await fetchAPI(`/api/client-invoices/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setClientInvoices(prev => prev.map(inv => (inv.id === id ? updated : inv)));
+    setClientInvoices(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteClientInvoice = async (id: string) => {
-    await fetchAPI(`/api/client-invoices/${id}`, { method: 'DELETE' });
-    setClientInvoices(prev => prev.filter(inv => inv.id !== id));
+    setClientInvoices(prev => prev.filter(item => item.id !== id));
   };
 
   const addClientUser = async (user: Partial<ClientUser>) => {
-    const created = await fetchAPI('/api/client-users', {
-      method: 'POST',
-      body: JSON.stringify(user)
-    });
-    setClientUsers(prev => [...prev, created]);
+    const newUser = { ...user, id: generateId() } as ClientUser;
+    setClientUsers(prev => [...prev, newUser]);
   };
 
   const updateClientUser = async (id: string, data: Partial<ClientUser>) => {
-    const updated = await fetchAPI(`/api/client-users/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setClientUsers(prev => prev.map(u => (u.id === id ? updated : u)));
+    setClientUsers(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteClientUser = async (id: string) => {
-    await fetchAPI(`/api/client-users/${id}`, { method: 'DELETE' });
-    setClientUsers(prev => prev.filter(u => u.id !== id));
+    setClientUsers(prev => prev.filter(item => item.id !== id));
   };
 
   const addInitiative = async (init: Partial<Initiative>) => {
-    const created = await fetchAPI('/api/initiatives', {
-      method: 'POST',
-      body: JSON.stringify(init)
-    });
-    setInitiatives(prev => [...prev, created]);
+    const newInit = { ...init, id: generateId() } as Initiative;
+    setInitiatives(prev => [...prev, newInit]);
   };
 
   const updateInitiative = async (id: string, data: Partial<Initiative>) => {
-    const updated = await fetchAPI(`/api/initiatives/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    setInitiatives(prev => prev.map(i => (i.id === id ? updated : i)));
+    setInitiatives(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
   };
 
   const deleteInitiative = async (id: string) => {
-    await fetchAPI(`/api/initiatives/${id}`, { method: 'DELETE' });
-    setInitiatives(prev => prev.filter(i => i.id !== id));
+    setInitiatives(prev => prev.filter(item => item.id !== id));
   };
 
   const updateSubmissionStatus = async (id: string, status: ContactSubmissionStatus) => {
-    const updated = await fetchAPI(`/api/contact-submissions/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({ status })
-    });
-    setContactSubmissions(prev => prev.map(sub => (sub.id === id ? updated : sub)));
+    setContactSubmissions(prev => prev.map(item => (item.id === id ? { ...item, status } : item)));
   };
 
   const deleteContactSubmission = async (id: string) => {
-    await fetchAPI(`/api/contact-submissions/${id}`, { method: 'DELETE' });
-    setContactSubmissions(prev => prev.filter(sub => sub.id !== id));
+    setContactSubmissions(prev => prev.filter(item => item.id !== id));
   };
 
   const importData = async (data: any) => {
-    await fetchAPI('/api/data/import', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-    await refreshData();
+    // Only updates local state
+    if (data.divisions) setDivisions(data.divisions);
+    if (data.projects) setProjects(data.projects);
+    if (data.team) setTeam(data.team);
+    // ... etc
+    console.log('Data locally imported', data);
   };
 
   const resetData = async () => {
-    await fetchAPI('/api/data/reset', { method: 'POST' });
-    await refreshData();
+    // Resets to the DB JSON
+    loadBaseData();
   };
 
   const value: DataContextType = {
@@ -415,7 +267,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initiatives,
     contactSubmissions,
     isLoading,
-    isAuthenticated: Boolean(authToken),
+    isAuthenticated,
     login,
     logout,
     refreshData,

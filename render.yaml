@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: cindral-website
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    plan: free

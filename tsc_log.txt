@@ -1,0 +1,40 @@
+components/Layout.tsx(3,38): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/AboutPage.tsx(2,72): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/AdminClientProjectPage.tsx(3,144): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/AdminClientProjectPage.tsx(194,27): error TS2322: Type '(ClientProjectTimelineItem | { label: string; date: string; status: string; description: string; id: string; })[]' is not assignable to type 'ClientProjectTimelineItem[]'.
+  Type 'ClientProjectTimelineItem | { label: string; date: string; status: string; description: string; id: string; }' is not assignable to type 'ClientProjectTimelineItem'.
+    Type '{ label: string; date: string; status: string; description: string; id: string; }' is not assignable to type 'ClientProjectTimelineItem'.
+      Types of property 'status' are incompatible.
+        Type 'string' is not assignable to type '"upcoming" | "complete" | "active"'.
+pages/AdminClientProjectPage.tsx(214,27): error TS2322: Type '(ClientProjectTimelineItem | { label: string; date: string; status: string; description: string; id: string; })[]' is not assignable to type 'ClientProjectTimelineItem[]'.
+  Type 'ClientProjectTimelineItem | { label: string; date: string; status: string; description: string; id: string; }' is not assignable to type 'ClientProjectTimelineItem'.
+    Type '{ label: string; date: string; status: string; description: string; id: string; }' is not assignable to type 'ClientProjectTimelineItem'.
+      Types of property 'status' are incompatible.
+        Type 'string' is not assignable to type '"upcoming" | "complete" | "active"'.
+pages/AdminClientProjectPage.tsx(225,27): error TS2322: Type '(ClientResourceLink | { label: string; url: string; type: string; description: string; id: string; })[]' is not assignable to type 'ClientResourceLink[]'.
+  Type 'ClientResourceLink | { label: string; url: string; type: string; description: string; id: string; }' is not assignable to type 'ClientResourceLink'.
+    Type '{ label: string; url: string; type: string; description: string; id: string; }' is not assignable to type 'ClientResourceLink'.
+      Types of property 'type' are incompatible.
+        Type 'string' is not assignable to type '"doc" | "design" | "repo" | "prototype" | "analytics" | "ticket" | "storage"'.
+pages/AdminClientProjectPage.tsx(284,9): error TS2322: Type 'ClientResourceLink | { id: string; label: string; url: string; type: "meeting"; description: string; }' is not assignable to type 'ClientResourceLink'.
+  Type '{ id: string; label: string; url: string; type: "meeting"; description: string; }' is not assignable to type 'ClientResourceLink'.
+    Types of property 'type' are incompatible.
+      Type '"meeting"' is not assignable to type '"doc" | "design" | "repo" | "prototype" | "analytics" | "ticket" | "storage"'.
+pages/AdminClientProjectPage.tsx(289,11): error TS2322: Type '"meeting"' is not assignable to type '"doc" | "design" | "repo" | "prototype" | "analytics" | "ticket" | "storage"'.
+pages/AdminPage.tsx(4,246): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/AdminPage.tsx(5,30): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/BrandAssetsPage.tsx(2,39): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/ClientPortalPage.tsx(2,176): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/ContactPage.tsx(2,64): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/CSRInitiativePage.tsx(5,84): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/CSRPage.tsx(2,81): error TS2307: Cannot find module 'recharts' or its corresponding type declarations.
+pages/CSRPage.tsx(4,30): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/CSRPage.tsx(5,135): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/DivisionPage.tsx(4,72): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/Home.tsx(3,80): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/ProjectPage.tsx(4,27): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/ResourcesPage.tsx(2,70): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/TeamMemberPage.tsx(4,120): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+pages/TeamPage.tsx(4,59): error TS2307: Cannot find module 'lucide-react' or its corresponding type declarations.
+vite.config.ts(2,39): error TS2307: Cannot find module 'vite' or its corresponding type declarations.
+vite.config.ts(3,19): error TS2307: Cannot find module '@vitejs/plugin-react' or its corresponding type declarations.
