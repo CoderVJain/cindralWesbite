@@ -10,7 +10,7 @@ import type {
   ClientUser,
   Initiative
 } from '../types';
-import dbData from '../server/data/db.json';
+import dbData from '../data/db.json';
 
 type ContactFormInput = {
   firstName: string;
