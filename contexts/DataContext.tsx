@@ -62,7 +62,9 @@ interface DataContextType {
   resetData: () => Promise<void>;
 }
 
+
 const TOKEN_STORAGE_KEY = 'cindral_admin_token';
+const DATA_STORAGE_KEY = 'cindral_site_data';
 
 // Helper to generate IDs roughly like nanoid
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -81,23 +83,59 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!localStorage.getItem(TOKEN_STORAGE_KEY));
 
+  // --- Helper to save current state to LocalStorage ---
+  const persistData = useCallback((data: Partial<any>) => {
+    try {
+      const currentStorage = localStorage.getItem(DATA_STORAGE_KEY);
+      const currentData = currentStorage ? JSON.parse(currentStorage) : {};
+      const newData = { ...currentData, ...data };
+      localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(newData));
+    } catch (e) {
+      console.error("Failed to save to local storage", e);
+    }
+  }, []);
+
   const loadBaseData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Check local storage first
+      const storedData = localStorage.getItem(DATA_STORAGE_KEY);
+      let dataToLoad: any = {};
 
-      setDivisions(dbData.divisions as Division[]);
-      setProjects(dbData.projects as Project[]);
-      setTeam(dbData.team as TeamMember[]);
-      setClientProjects(dbData.clientProjects as unknown as ClientProject[]);
-      setClientInvoices(dbData.clientInvoices as unknown as ClientInvoice[]);
-      setClientUsers(dbData.clientUsers as unknown as ClientUser[]);
-      setInitiatives(dbData.initiatives as Initiative[]);
-      // Contact submissions are empty initially in static mode as they aren't persistable
-      setContactSubmissions((dbData.contactSubmissions || []) as unknown as ContactSubmission[]);
+      if (storedData) {
+        dataToLoad = JSON.parse(storedData);
+        // Merge with defaults if missing keys (optional, but good for robustness)
+        // ideally if storedData exists we use it.
+      } else {
+        // Fallback to initial db.json and save it
+        dataToLoad = {
+          divisions: dbData.divisions,
+          projects: dbData.projects,
+          team: dbData.team,
+          clientProjects: dbData.clientProjects,
+          clientInvoices: dbData.clientInvoices,
+          clientUsers: dbData.clientUsers,
+          initiatives: dbData.initiatives,
+          contactSubmissions: dbData.contactSubmissions || []
+        };
+        localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(dataToLoad));
+      }
+
+      setDivisions(dataToLoad.divisions || []);
+      setProjects(dataToLoad.projects || []);
+      setTeam(dataToLoad.team || []);
+      setClientProjects(dataToLoad.clientProjects || []);
+      setClientInvoices(dataToLoad.clientInvoices || []);
+      setClientUsers(dataToLoad.clientUsers || []);
+      setInitiatives(dataToLoad.initiatives || []);
+      setContactSubmissions(dataToLoad.contactSubmissions || []);
+
     } catch (error) {
       console.error('Failed to load site data', error);
+      // Fallback
+      setDivisions(dbData.divisions as Division[]);
+      setProjects(dbData.projects as Project[]);
+      // ... minimal fallback
     } finally {
       setIsLoading(false);
     }
@@ -108,15 +146,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [loadBaseData]);
 
   const refreshData = async () => {
-    // In static mode, refresh essentially resets to initial JSON state
-    // but here we might want to keep local edits? 
-    // For now, let's just re-load base which resets changes, 
-    // effectively simulating "unsaved" changes being lost on refresh.
     await loadBaseData();
   };
 
   const login = async (password: string) => {
-    // Mock login - accept any non-empty password
     if (password) {
       localStorage.setItem(TOKEN_STORAGE_KEY, 'mock-token');
       setIsAuthenticated(true);
@@ -131,130 +164,187 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const submitContactForm = async (payload: ContactFormInput) => {
-    console.log('Contact Form Submitted (Static Mode):', payload);
     const newSubmission = {
       id: generateId(),
       ...payload,
-      status: 'new',
+      lastName: payload.lastName || '',
+      status: 'new' as ContactSubmissionStatus,
       createdAt: new Date().toISOString()
-    };
-    // Update local state to show it in admin panel temporarily
-    setContactSubmissions(prev => [newSubmission as unknown as ContactSubmission, ...prev]);
+    } as ContactSubmission;
+    const updatedSubmissions = [newSubmission, ...contactSubmissions];
+    setContactSubmissions(updatedSubmissions);
+    persistData({ contactSubmissions: updatedSubmissions });
   };
 
-  // --- CRUD Operations (Local State Only) ---
+  // --- CRUD Operations with Persistence ---
 
+  // Division
   const addDivision = async (division: Partial<Division>) => {
     const newDiv = { ...division, id: generateId() } as Division;
-    setDivisions(prev => [...prev, newDiv]);
+    const updated = [...divisions, newDiv];
+    setDivisions(updated);
+    persistData({ divisions: updated });
   };
-
   const updateDivision = async (id: string, data: Partial<Division>) => {
-    setDivisions(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = divisions.map(item => (item.id === id ? { ...item, ...data } : item));
+    setDivisions(updated);
+    persistData({ divisions: updated });
   };
-
   const deleteDivision = async (id: string) => {
-    setDivisions(prev => prev.filter(item => item.id !== id));
+    const updated = divisions.filter(item => item.id !== id);
+    setDivisions(updated);
+    persistData({ divisions: updated });
   };
 
+  // Project
   const addProject = async (project: Partial<Project>) => {
     const newProject = { ...project, id: generateId() } as Project;
-    setProjects(prev => [...prev, newProject]);
+    const updated = [...projects, newProject];
+    setProjects(updated);
+    persistData({ projects: updated });
   };
-
   const updateProject = async (id: string, data: Partial<Project>) => {
-    setProjects(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = projects.map(item => (item.id === id ? { ...item, ...data } : item));
+    setProjects(updated);
+    persistData({ projects: updated });
   };
-
   const deleteProject = async (id: string) => {
-    setProjects(prev => prev.filter(item => item.id !== id));
+    const updated = projects.filter(item => item.id !== id);
+    setProjects(updated);
+    persistData({ projects: updated });
   };
 
+  // Team
   const addTeamMember = async (member: Partial<TeamMember>) => {
     const newMember = { ...member, id: generateId() } as TeamMember;
-    setTeam(prev => [...prev, newMember]);
+    const updated = [...team, newMember];
+    setTeam(updated);
+    persistData({ team: updated });
   };
-
   const updateTeamMember = async (id: string, data: Partial<TeamMember>) => {
-    setTeam(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = team.map(item => (item.id === id ? { ...item, ...data } : item));
+    setTeam(updated);
+    persistData({ team: updated });
   };
-
   const deleteTeamMember = async (id: string) => {
-    setTeam(prev => prev.filter(item => item.id !== id));
+    const updated = team.filter(item => item.id !== id);
+    setTeam(updated);
+    persistData({ team: updated });
   };
 
+  // Client Project
   const addClientProject = async (project: Partial<ClientProject>) => {
     const newProject = { ...project, id: generateId() } as ClientProject;
-    setClientProjects(prev => [...prev, newProject]);
+    const updated = [...clientProjects, newProject];
+    setClientProjects(updated);
+    persistData({ clientProjects: updated });
   };
-
   const updateClientProject = async (id: string, data: Partial<ClientProject>) => {
-    setClientProjects(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = clientProjects.map(item => (item.id === id ? { ...item, ...data } : item));
+    setClientProjects(updated);
+    persistData({ clientProjects: updated });
   };
-
   const deleteClientProject = async (id: string) => {
-    setClientProjects(prev => prev.filter(item => item.id !== id));
+    const updated = clientProjects.filter(item => item.id !== id);
+    setClientProjects(updated);
+    persistData({ clientProjects: updated });
   };
 
+  // Client Invoice
   const addClientInvoice = async (invoice: Partial<ClientInvoice>) => {
     const newInv = { ...invoice, id: generateId() } as ClientInvoice;
-    setClientInvoices(prev => [...prev, newInv]);
+    const updated = [...clientInvoices, newInv];
+    setClientInvoices(updated);
+    persistData({ clientInvoices: updated });
   };
-
   const updateClientInvoice = async (id: string, data: Partial<ClientInvoice>) => {
-    setClientInvoices(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = clientInvoices.map(item => (item.id === id ? { ...item, ...data } : item));
+    setClientInvoices(updated);
+    persistData({ clientInvoices: updated });
   };
-
   const deleteClientInvoice = async (id: string) => {
-    setClientInvoices(prev => prev.filter(item => item.id !== id));
+    const updated = clientInvoices.filter(item => item.id !== id);
+    setClientInvoices(updated);
+    persistData({ clientInvoices: updated });
   };
 
+  // Client User
   const addClientUser = async (user: Partial<ClientUser>) => {
     const newUser = { ...user, id: generateId() } as ClientUser;
-    setClientUsers(prev => [...prev, newUser]);
+    const updated = [...clientUsers, newUser];
+    setClientUsers(updated);
+    persistData({ clientUsers: updated });
   };
-
   const updateClientUser = async (id: string, data: Partial<ClientUser>) => {
-    setClientUsers(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = clientUsers.map(item => (item.id === id ? { ...item, ...data } : item));
+    setClientUsers(updated);
+    persistData({ clientUsers: updated });
   };
-
   const deleteClientUser = async (id: string) => {
-    setClientUsers(prev => prev.filter(item => item.id !== id));
+    const updated = clientUsers.filter(item => item.id !== id);
+    setClientUsers(updated);
+    persistData({ clientUsers: updated });
   };
 
+  // Initiative
   const addInitiative = async (init: Partial<Initiative>) => {
     const newInit = { ...init, id: generateId() } as Initiative;
-    setInitiatives(prev => [...prev, newInit]);
+    const updated = [...initiatives, newInit];
+    setInitiatives(updated);
+    persistData({ initiatives: updated });
   };
-
   const updateInitiative = async (id: string, data: Partial<Initiative>) => {
-    setInitiatives(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)));
+    const updated = initiatives.map(item => (item.id === id ? { ...item, ...data } : item));
+    setInitiatives(updated);
+    persistData({ initiatives: updated });
   };
-
   const deleteInitiative = async (id: string) => {
-    setInitiatives(prev => prev.filter(item => item.id !== id));
+    const updated = initiatives.filter(item => item.id !== id);
+    setInitiatives(updated);
+    persistData({ initiatives: updated });
   };
 
+  // Contact Submissions
   const updateSubmissionStatus = async (id: string, status: ContactSubmissionStatus) => {
-    setContactSubmissions(prev => prev.map(item => (item.id === id ? { ...item, status } : item)));
+    const updated = contactSubmissions.map(item => (item.id === id ? { ...item, status } : item));
+    setContactSubmissions(updated);
+    persistData({ contactSubmissions: updated });
   };
-
   const deleteContactSubmission = async (id: string) => {
-    setContactSubmissions(prev => prev.filter(item => item.id !== id));
+    const updated = contactSubmissions.filter(item => item.id !== id);
+    setContactSubmissions(updated);
+    persistData({ contactSubmissions: updated });
   };
 
   const importData = async (data: any) => {
-    // Only updates local state
-    if (data.divisions) setDivisions(data.divisions);
-    if (data.projects) setProjects(data.projects);
-    if (data.team) setTeam(data.team);
-    // ... etc
-    console.log('Data locally imported', data);
+    const newData = {
+      divisions: data.divisions || divisions,
+      projects: data.projects || projects,
+      team: data.team || team,
+      clientProjects: data.clientProjects || clientProjects,
+      clientInvoices: data.clientInvoices || clientInvoices,
+      clientUsers: data.clientUsers || clientUsers,
+      initiatives: data.initiatives || initiatives,
+      contactSubmissions: data.contactSubmissions || contactSubmissions
+    };
+
+    setDivisions(newData.divisions);
+    setProjects(newData.projects);
+    setTeam(newData.team);
+    setClientProjects(newData.clientProjects);
+    setClientInvoices(newData.clientInvoices);
+    setClientUsers(newData.clientUsers);
+    setInitiatives(newData.initiatives);
+    setContactSubmissions(newData.contactSubmissions);
+
+    localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(newData));
+    console.log('Data imported and saved to localStorage', newData);
   };
 
   const resetData = async () => {
-    // Resets to the DB JSON
-    loadBaseData();
+    localStorage.removeItem(DATA_STORAGE_KEY);
+    // Reload to re-initialize from db.json
+    window.location.reload();
   };
 
   const value: DataContextType = {
